@@ -76,13 +76,13 @@ class Transaction(object):
 	def commandMode(self, nick, *args):
 		if nick[0] in "#&":
 			# Channel
-			channel = nick[1:]
+			channel = nick
 			chan = self.get_channel(channel)
 
 			if len(args) == 0:
 				# Send mode
-				self.ok("RPL_CHANNELMODEIS", "#%s %s" % (channel, chan.get_mode()))
-				self.ok("RPL_CREATIONTIME", "#%s %s" % (channel, chan.get_creation_time()))
+				self.ok("RPL_CHANNELMODEIS", "%s %s" % (channel, chan.get_mode()))
+				self.ok("RPL_CREATIONTIME", "%s %s" % (channel, chan.get_creation_time()))
 				return
 		else:
 			# User
