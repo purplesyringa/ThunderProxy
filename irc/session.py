@@ -7,6 +7,7 @@ class Session(object):
 		self.conn = conn
 		self.channels = []
 		self.Channel = Channel
+		self.nick = "*"
 		self.init()
 
 	def sendall(self, *args, **kwargs):
@@ -14,12 +15,12 @@ class Session(object):
 	def recvall(self, *args, **kwargs):
 		return self.conn.recvall(*args, **kwargs)
 
-	def reply(self, code, nick, data):
-		self.sendall(":localhost %s %s %s" % (code, nick, data))
-	def error(self, code, nick, data):
-		self.reply(errorcodes[code][0], nick, "%s %s" % (errorcodes[code][1], data))
-	def ok(self, code, nick, data):
-		self.reply(replycodes[code], nick, data)
+	def reply(self, code, data):
+		self.sendall(":localhost %s %s %s" % (code, self.nick, data))
+	def error(self, code, data):
+		self.reply(errorcodes[code][0], "%s %s" % (errorcodes[code][1], data))
+	def ok(self, code, data):
+		self.reply(replycodes[code], data)
 
 	def init(self):
 		debug("New session")
@@ -40,7 +41,7 @@ class Session(object):
 			if command in dir(self):
 				getattr(self, command)(*message["params"])
 			else:
-				self.error("ERR_UNKNOWNCOMMAND", "*", message["command"])
+				self.error("ERR_UNKNOWNCOMMAND", message["command"])
 
 	def parseMessage(self, message):
 		prefix = None
@@ -82,7 +83,6 @@ class Session(object):
 
 		self.ok(
 			"RPL_WELCOME",
-			self.nick,
 			":Welcome to the Internet Relay Network %s!%s@%s" % (self.nick, username, hostname)
 		)
 
@@ -99,6 +99,6 @@ class Session(object):
 			self.channels.append(chan)
 
 		if topic is None:
-			self.ok("RPL_NOTOPIC", self.nick, "")
+			self.ok("RPL_NOTOPIC", "")
 		else:
-			self.ok("RPL_TOPIC", self.nick, ":%s" % topic)
+			self.ok("RPL_TOPIC", ":%s" % topic)
