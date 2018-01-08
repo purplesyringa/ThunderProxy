@@ -27,6 +27,9 @@ class Session(object):
 			if message.strip() == "":
 				continue
 
+			if message == "QUIT":
+				break
+
 			message = self.parseMessage(message)
 
 			command = message["command"][0].upper() + message["command"][1:].lower()
