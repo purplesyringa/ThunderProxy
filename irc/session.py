@@ -1,13 +1,14 @@
 from util import debug, critical, ServerError, CommandError
 from util import replycodes, errorcodes
-import time, re
+from transaction import Transaction
+import re
 
 class Session(object):
 	def __init__(self, conn, Channel):
 		self.conn = conn
-		self.channels = []
 		self.Channel = Channel
 		self.nick = "*"
+		self.transaction = None
 		self.init()
 
 	def sendall(self, *args, **kwargs):
@@ -38,10 +39,11 @@ class Session(object):
 			command = message["command"][0].upper() + message["command"][1:].lower()
 			command = "command" + command
 
-			if command in dir(self):
-				getattr(self, command)(*message["params"])
+			transaction = self.transaction or self
+			if command in dir(transaction):
+				getattr(transaction, command)(*message["params"])
 			else:
-				self.error("ERR_UNKNOWNCOMMAND", message["command"])
+				transaction.error("ERR_UNKNOWNCOMMAND", message["command"])
 
 	def parseMessage(self, message):
 		prefix = None
@@ -81,24 +83,7 @@ class Session(object):
 		self.servername = servername
 		self.realname = realname
 
-		self.ok(
-			"RPL_WELCOME",
-			":Welcome to the Internet Relay Network %s!%s@%s" % (self.nick, username, hostname)
+		self.transaction = Transaction(
+			self.nick, self.username, self.hostname,
+			Channel=self.Channel, conn=self.conn
 		)
-
-	def commandJoin(self, channels, keys=None):
-		channels = channels.split(",")
-		keys = keys.split(",") if keys is not None else []
-
-		channels = map(None, channels, keys) # This is like zip() but with padding
-
-		topic = None
-		for channel in channels:
-			chan = self.Channel(channel[0], key=channel[1])
-			topic = chan.get_topic()
-			self.channels.append(chan)
-
-		if topic is None:
-			self.ok("RPL_NOTOPIC", "")
-		else:
-			self.ok("RPL_TOPIC", ":%s" % topic)
