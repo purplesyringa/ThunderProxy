@@ -43,6 +43,8 @@ class Session(object):
 			transaction = self.transaction or self
 			if command in dir(transaction):
 				getattr(transaction, command)(*message["params"])
+			elif command == "commandPing":
+				self.commandPing(*message["params"])
 			else:
 				transaction.error("ERR_UNKNOWNCOMMAND", message["command"])
 
@@ -89,3 +91,6 @@ class Session(object):
 			Channel=self.Channel, User=self.User,
 			conn=self.conn
 		)
+
+	def commandPing(self, server):
+		self.sendall(":localhost PONG localhost :%s" % server)
