@@ -45,6 +45,9 @@ class Session(object):
 
 		command = message[0]
 
+		if len(message) == 1:
+			return dict(command=command, params=[])
+
 		params = message[1]
 
 		trailing = None
