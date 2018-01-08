@@ -16,6 +16,8 @@ class Session(object):
 		self.sendall(":localhost %s %s %s" % (code, nick, data))
 	def error(self, code, nick, data):
 		self.reply(errorcodes[code][0], nick, "%s %s" % (errorcodes[code][1], data))
+	def ok(self, code, nick, data):
+		self.reply(replycodes[code], nick, data)
 
 	def init(self):
 		debug("New session")
@@ -72,3 +74,9 @@ class Session(object):
 		self.hostname = hostname
 		self.servername = servername
 		self.realname = realname
+
+		self.ok(
+			"RPL_WELCOME",
+			self.nick,
+			":Welcome to the Internet Relay Network %s!%s@%s" % (self.nick, username, hostname)
+		)
