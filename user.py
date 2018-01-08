@@ -13,3 +13,13 @@ class User(object):
 		return False
 	def is_moderator(self):
 		return False
+
+	# Modes
+	def set_invisible(self, value):
+		raise NotImplementedError()
+	def set_receipt_server_notices(self, value):
+		raise NotImplementedError()
+	def set_wallops(self, value):
+		raise NotImplementedError()
+	def set_moderator(self, value):
+		raise NotImplementedError()

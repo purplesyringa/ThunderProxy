@@ -72,3 +72,72 @@ class Transaction(object):
 		else:
 			self.user.set_away(True, reason=reason)
 			self.ok("RPL_NOWAWAY", "")
+
+	def commandMode(self, nick, *args):
+		if nick[0] in "#&":
+			# Channel
+			channel = nick[1:]
+			chan = self.get_channel(channel)
+
+			if len(args) == 0:
+				# Send mode
+				self.ok("RPL_CHANNELMODEIS", "#%s %s" % (channel, chan.get_mode()))
+				self.ok("RPL_CREATIONTIME", "#%s %s" % (channel, chan.get_creation_time()))
+				return
+		else:
+			# User
+			if nick != self.nick:
+				self.error("ERR_USERSDONTMATCH", "")
+				return
+
+			if len(args) == 0:
+				# Send mode
+				self.ok("RPL_UMODEIS", "%s %s" % (nick, self.user.get_mode()))
+				return
+
+
+		# Set mode
+		cmds = args[0]
+		state = ""
+
+		for char in cmds:
+			if char in "+-":
+				state = char
+			else:
+				if nick[0] in "#&":
+					# Channel
+					if char == "b":
+						chan.set_banmask(banmask=args[1])
+					elif char == "l":
+						chan.set_limit(user=args[2], limit=args[1])
+					elif char == "v":
+						chan.set_speak(user=args[1], value=state=="+")
+					elif char == "o":
+						chan.set_moderator(user=args[1], value=state=="+")
+					elif char == "p":
+						chan.set_private(value=state=="+")
+					elif char == "s":
+						chan.set_secret(value=state=="+")
+					elif char == "i":
+						chan.set_invite(value=state=="+")
+					elif char == "t":
+						chan.set_topic_by_operator(value=state=="+")
+					elif char == "m":
+						chan.set_moderated(value=state=="+")
+					else:
+						self.error("ERR_UNKNOWNMODE", "")
+				else:
+					# User
+					if char == "i":
+						self.user.set_invisible(value=state=="+")
+					elif char == "s":
+						self.user.set_receipt_server_notices(value=state=="+")
+					elif char == "w":
+						self.user.set_wallops(value=state=="+")
+					elif char == "o":
+						if state == "-" or self.user.is_moderator():
+							self.user.set_moderator(value=state=="+")
+					else:
+						self.error("ERR_UNKNOWNMODE", "")
+
+				state = ""
