@@ -9,7 +9,7 @@ class Transaction(object):
 		self.hostname = hostname
 		self.channels = []
 		self.Channel = Channel
-		self.user = User(nick, username, hostname)
+		self.user = User(nick)
 		self.conn = conn
 		self.init()
 
@@ -37,17 +37,10 @@ class Transaction(object):
 
 		channels = map(None, channels, keys) # This is like zip() but with padding
 
-		topic = None
 		for channel in channels:
 			chan = self.Channel(channel[0], key=channel[1])
-			topic = chan.get_topic()
+			chan.connect(self.nick)
 			self.channels.append(chan)
-
-			# Send topic
-			if topic is None:
-				self.ok("RPL_NOTOPIC", "")
-			else:
-				self.ok("RPL_TOPIC", ":%s" % topic)
 
 			# Specify online users
 			online = chan.get_online()
@@ -61,8 +54,8 @@ class Transaction(object):
 			]
 			online = " ".join(online)
 
-			self.ok("RPL_NAMREPLY", ":%s" % online)
-			self.ok("RPL_ENDOFNAMES", "")
+			self.ok("RPL_NAMREPLY", "@ %s :%s" % (channel[0], online))
+			self.ok("RPL_ENDOFNAMES", "%s :End of /NAMES list." % channel[0])
 
 	def commandAway(self, reason=None):
 		if reason is None:

@@ -1,8 +1,6 @@
 class User(object):
-	def __init__(self, nick, username, hostname):
+	def __init__(self, nick):
 		self.nick = nick
-		self.username = username
-		self.hostname = hostname
 
 		self.is_away = False
 		self.away_reason = None
@@ -10,3 +8,8 @@ class User(object):
 	def set_away(self, is_away, reason=None):
 		self.is_away = is_away
 		self.away_reason = reason
+
+	def is_admin(self):
+		return False
+	def is_moderator(self):
+		return False
