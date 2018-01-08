@@ -14,23 +14,29 @@ class ZeroWebSocket(object):
 
 	def __getattr__(self, cmd):
 		def proxy(*args, **kwargs):
-			data = None
-			if len(args) == 0:
-				data = dict(cmd=cmd, params=kwargs, id=self.next_id)
-			elif len(kwargs) == 0:
-				data = dict(cmd=cmd, params=args, id=self.next_id)
-			else:
-				raise TypeError("Only args/kwargs alone are allowed in call to ZeroWebSocket")
-
-			self.ws.send(json.dumps(data))
+			self.async(cmd, *args, **kwargs)
 
 			while True:
-				response = json.loads(self.ws.recv())
+				response = self.recv()
 				if response["cmd"] == "response" and response["to"] == self.next_id:
 					self.next_id += 1
 					return response["result"]
 
 		return proxy
+
+	def recv(self):
+		return json.loads(self.ws.recv())
+
+	def async(self, cmd, *args, **kwargs):
+		data = None
+		if len(args) == 0:
+			data = dict(cmd=cmd, params=kwargs, id=self.next_id)
+		elif len(kwargs) == 0:
+			data = dict(cmd=cmd, params=args, id=self.next_id)
+		else:
+			raise TypeError("Only args/kwargs alone are allowed in call to ZeroWebSocket")
+
+		self.ws.send(json.dumps(data))
 
 	def __call__(self, cmd, *args, **kwargs):
 		return self[cmd](*args, **kwargs)
