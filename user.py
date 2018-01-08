@@ -23,3 +23,7 @@ class User(object):
 		raise NotImplementedError()
 	def set_moderator(self, value):
 		raise NotImplementedError()
+
+	# Messages
+	def send(self, from_, message):
+		pass

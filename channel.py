@@ -46,3 +46,7 @@ class Channel(object):
 		raise NotImplementedError()
 	def set_moderated(self, value):
 		raise NotImplementedError()
+
+	# Messages
+	def send(self, from_, message):
+		pass
