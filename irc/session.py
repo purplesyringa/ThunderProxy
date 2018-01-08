@@ -1,4 +1,5 @@
 from util import debug, critical, ServerError, CommandError
+from util import replycodes, errorcodes
 import time, re
 
 class Session(object):
@@ -10,6 +11,11 @@ class Session(object):
 		return self.conn.sendall(*args, **kwargs)
 	def recvall(self, *args, **kwargs):
 		return self.conn.recvall(*args, **kwargs)
+
+	def reply(self, code, nick, data):
+		self.sendall(":localhost %s %s %s" % (code, nick, data))
+	def error(self, code, nick, data):
+		self.reply(errorcodes[code][0], nick, "%s %s" % (errorcodes[code][1], data))
 
 	def init(self):
 		debug("New session")
@@ -25,7 +31,9 @@ class Session(object):
 			command = "command" + command
 
 			if command in dir(self):
-				getattr(command, self)(*args)
+				getattr(self, command)(*message["params"])
+			else:
+				self.error("ERR_UNKNOWNCOMMAND", "*", message["command"])
 
 	def parseMessage(self, message):
 		prefix = None
@@ -53,4 +61,11 @@ class Session(object):
 
 		return dict(command=command, params=params)
 
-	def command
+	def commandNick(self, nick):
+		self.nick = nick
+
+	def commandUser(self, username, hostname, servername, realname):
+		self.username = username
+		self.hostname = hostname
+		self.servername = servername
+		self.realname = realname
