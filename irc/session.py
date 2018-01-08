@@ -61,13 +61,13 @@ class Session(object):
 		if len(message) == 1:
 			return dict(command=command, params=[])
 
-		params = message[1]
+		params = message[1].strip()
 
 		trailing = None
 		try:
 			index = params.index(":")
 			trailing = params[index+1:]
-			params = params[:index]
+			params = params[:index].strip()
 		except ValueError:
 			pass
 
