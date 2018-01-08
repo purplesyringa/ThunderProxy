@@ -68,7 +68,7 @@ class Session(object):
 		except ValueError:
 			pass
 
-		params = re.split(r" +", params)
+		params = re.split(r" +", params) if params != "" else []
 		if trailing is not None:
 			params.append(trailing)
 
