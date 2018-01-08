@@ -3,8 +3,10 @@ from util import replycodes, errorcodes
 import time, re
 
 class Session(object):
-	def __init__(self, conn):
+	def __init__(self, conn, Channel):
 		self.conn = conn
+		self.channels = []
+		self.Channel = Channel
 		self.init()
 
 	def sendall(self, *args, **kwargs):
@@ -83,3 +85,20 @@ class Session(object):
 			self.nick,
 			":Welcome to the Internet Relay Network %s!%s@%s" % (self.nick, username, hostname)
 		)
+
+	def commandJoin(self, channels, keys=None):
+		channels = channels.split(",")
+		keys = keys.split(",") if keys is not None else []
+
+		channels = map(None, channels, keys) # This is like zip() but with padding
+
+		topic = None
+		for channel in channels:
+			chan = self.Channel(channel[0], key=channel[1])
+			topic = chan.get_topic()
+			self.channels.append(chan)
+
+		if topic is None:
+			self.ok("RPL_NOTOPIC", self.nick, "")
+		else:
+			self.ok("RPL_TOPIC", self.nick, ":%s" % topic)
