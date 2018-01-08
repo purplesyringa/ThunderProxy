@@ -141,3 +141,16 @@ class Transaction(object):
 						self.error("ERR_UNKNOWNMODE", "")
 
 				state = ""
+
+	def commandPrivmsg(self, receivers, message):
+		receivers = receivers.split(",")
+
+		for to in receivers:
+			if to[0] in "#&":
+				# Public message to channel
+				chan = self.get_channel(to)
+				chan.send(self.nick, message)
+			else:
+				# Private message
+				user = User(to)
+				user.send(self.nick, message)
