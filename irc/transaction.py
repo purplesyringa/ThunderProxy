@@ -63,3 +63,11 @@ class Transaction(object):
 
 			self.ok("RPL_NAMREPLY", ":%s" % online)
 			self.ok("RPL_ENDOFNAMES", "")
+
+	def commandAway(self, reason=None):
+		if reason is None:
+			self.user.set_away(False)
+			self.ok("RPL_UNAWAY", "")
+		else:
+			self.user.set_away(True, reason=reason)
+			self.ok("RPL_NOWAWAY", "")
