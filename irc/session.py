@@ -4,9 +4,10 @@ from transaction import Transaction
 import re
 
 class Session(object):
-	def __init__(self, conn, Channel):
+	def __init__(self, conn, Channel, User):
 		self.conn = conn
 		self.Channel = Channel
+		self.User = User
 		self.nick = "*"
 		self.transaction = None
 		self.init()
@@ -85,5 +86,6 @@ class Session(object):
 
 		self.transaction = Transaction(
 			self.nick, self.username, self.hostname,
-			Channel=self.Channel, conn=self.conn
+			Channel=self.Channel, User=self.User,
+			conn=self.conn
 		)

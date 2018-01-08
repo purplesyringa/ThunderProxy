@@ -4,10 +4,11 @@ from connection import Connection
 from session import Session
 
 class Server(object):
-	def __init__(self, host, port, Channel):
+	def __init__(self, host, port, Channel, User):
 		self.host = host
 		self.port = port
 		self.Channel = Channel
+		self.User = User
 		self.sock = None
 
 	def serve(self):
@@ -38,6 +39,6 @@ class Server(object):
 	def run(self, conn):
 		try:
 			conn = Connection(conn)
-			session = Session(conn, self.Channel)
+			session = Session(conn, Channel=self.Channel, User=self.User)
 		finally:
 			conn.close()

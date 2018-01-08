@@ -3,12 +3,13 @@ from util import replycodes, errorcodes
 import re
 
 class Transaction(object):
-	def __init__(self, nick, username, hostname, Channel, conn):
+	def __init__(self, nick, username, hostname, Channel, User, conn):
 		self.nick = nick
 		self.username = username
 		self.hostname = hostname
 		self.channels = []
 		self.Channel = Channel
+		self.user = User(nick, username, hostname)
 		self.conn = conn
 		self.init()
 
