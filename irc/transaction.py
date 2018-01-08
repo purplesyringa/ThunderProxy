@@ -38,9 +38,12 @@ class Transaction(object):
 		channels = map(None, channels, keys) # This is like zip() but with padding
 
 		for channel in channels:
-			chan = self.Channel(channel[0], key=channel[1])
+			chan = self.get_channel(channel[0])
+			if chan.get_key() != channel[1]:
+				self.error("ERR_BADCHANNELKEY", "")
+				return
+
 			chan.connect(self.nick)
-			self.channels.append(chan)
 
 			# Specify online users
 			online = chan.get_online()
@@ -56,6 +59,11 @@ class Transaction(object):
 
 			self.ok("RPL_NAMREPLY", "@ %s :%s" % (channel[0], online))
 			self.ok("RPL_ENDOFNAMES", "%s :End of /NAMES list." % channel[0])
+
+	def get_channel(self, channel):
+		chan = self.Channel(channel)
+		self.channels.append(chan)
+		return chan
 
 	def commandAway(self, reason=None):
 		if reason is None:

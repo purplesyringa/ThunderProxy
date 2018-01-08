@@ -1,10 +1,12 @@
 from user import User
 
 class Channel(object):
-	def __init__(self, name, key=None):
+	def __init__(self, name):
 		self.name = name
-		self.key = key
 		self.online = []
+
+	def get_key(self):
+		return None
 
 	def get_topic(self):
 		return None
