@@ -17,6 +17,7 @@ class CommandError(Exception):
 	pass
 
 replycodes = dict(
+	RPL_WELCOME = "001",
 	RPL_TRACELINK = 200,
 	RPL_TRACECONNECTING = 201,
 	RPL_TRACEHANDSHAKE = 202,
