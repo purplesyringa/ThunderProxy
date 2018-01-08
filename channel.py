@@ -5,3 +5,9 @@ class Channel(object):
 
 	def get_topic(self):
 		return None
+
+	def get_online(self):
+		return []
+
+	def get_user(self, nick):
+		raise NotImplementedError()

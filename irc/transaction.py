@@ -42,7 +42,23 @@ class Transaction(object):
 			topic = chan.get_topic()
 			self.channels.append(chan)
 
-		if topic is None:
-			self.ok("RPL_NOTOPIC", "")
-		else:
-			self.ok("RPL_TOPIC", ":%s" % topic)
+			# Send topic
+			if topic is None:
+				self.ok("RPL_NOTOPIC", "")
+			else:
+				self.ok("RPL_TOPIC", ":%s" % topic)
+
+			# Specify online users
+			online = chan.get_online()
+			online = [(nick, chan.get_user(nick)) for nick in online]
+			online = [
+				"@" + user[0] if user[1].is_admin() else
+				"+" + user[0] if user[1].is_moderator() else
+				user[0]
+
+				for user in online
+			]
+			online = " ".join(online)
+
+			self.ok("RPL_NAMREPLY", ":%s" % online)
+			self.ok("RPL_ENDOFNAMES", "")
