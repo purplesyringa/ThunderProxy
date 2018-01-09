@@ -38,3 +38,36 @@ class ThunderWave(object):
 				)
 
 				callback(address)
+
+	def get_lobby_messages(self, address, since=0):
+		path = "%sdata/%s/data/users/%s/data.json" % (zeronet_directory, self.address, address)
+
+		messages = None
+		with open(path, "r") as f:
+			data = json.loads(f.read())
+			messages = data["messages"]
+
+		messages = [
+			message for message in messages
+			if message["date_added"] > since
+		]
+
+		for message in messages:
+			if message.get("key", None) is None:
+				message["key"] = None
+
+		return messages
+
+	def get_all_lobby_messages(self, since=0):
+		path = "%sdata/%s/data/users" % (zeronet_directory, self.address)
+
+		(_, dirnames, _) = os.walk(path).next()
+
+		messages = []
+		for dirname in dirnames:
+			try:
+				messages += self.get_lobby_messages(dirname, since=since)
+			except IOError:
+				pass
+
+		return messages
