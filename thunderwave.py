@@ -39,7 +39,17 @@ class ThunderWave(object):
 
 				callback(address)
 
+	def get_cert_user_id(self, address):
+		path = "%sdata/%s/data/users/%s/content.json" % (zeronet_directory, self.address, address)
+
+		data = None
+		with open(path, "r") as f:
+			data = json.loads(f.read())
+
+		return data["cert_user_id"]
+
 	def get_lobby_messages(self, address, since=0):
+		cert_user_id = self.get_cert_user_id(address)
 		path = "%sdata/%s/data/users/%s/data.json" % (zeronet_directory, self.address, address)
 
 		messages = None
@@ -56,6 +66,7 @@ class ThunderWave(object):
 			if message.get("key", None) is None:
 				message["key"] = None
 			message["from_address"] = address
+			message["cert_user_id"] = cert_user_id
 
 		return messages
 
