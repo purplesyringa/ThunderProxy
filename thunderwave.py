@@ -55,6 +55,7 @@ class ThunderWave(object):
 		for message in messages:
 			if message.get("key", None) is None:
 				message["key"] = None
+			message["from_address"] = address
 
 		return messages
 
