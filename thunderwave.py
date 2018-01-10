@@ -1,6 +1,9 @@
 from config import zeronet_directory
 from zerowebsocket import ZeroWebSocket
-import json, os, sqlite3
+import json, os, sqlite3, time, errno
+
+current_directory = os.path.dirname(os.path.realpath(__file__))
+
 
 class ThunderWave(object):
 	def __init__(self):
@@ -8,6 +11,15 @@ class ThunderWave(object):
 
 		self.conn = sqlite3.connect("%sdata/%s/data/ThunderWave2.db" % (zeronet_directory, self.address))
 		self.cursor = self.conn.cursor()
+
+		self.cache_directory = current_directory + "/cache"
+		try:
+			os.makedirs(self.cache_directory)
+		except OSError as e:
+			if e.errno != errno.EEXIST:
+				raise
+
+		self.update_cache_time()
 
 	def listen_for_file_done(self, callback):
 		# Find wrapper_key in sites.json
@@ -81,3 +93,52 @@ class ThunderWave(object):
 		messages = new_messages
 
 		return messages
+
+	def load_new_lobby_messages(self, address=None):
+		last_time = dict()
+		try:
+			with open(self.cache_directory + "/last_time.json", "r") as f:
+				last_time = json.loads(f.read())
+		except IOError:
+			pass
+
+		since = None
+		try:
+			since = last_time[address]
+		except KeyError:
+			since = 0
+
+		messages = self.get_lobby_messages(address=address, since=since)
+
+		if messages != []:
+			last_date_added = max([message["date_added"] for message in messages])
+			last_time[address] = last_date_added
+
+			with open(self.cache_directory + "/last_time.json", "w") as f:
+				f.write(json.dumps(last_time))
+
+		return messages
+
+	def update_cache_time(self):
+		last_time = dict()
+		try:
+			with open(self.cache_directory + "/last_time.json", "r") as f:
+				last_time = json.loads(f.read())
+		except IOError:
+			pass
+
+		messages = self.cursor.execute("""
+			SELECT
+				MAX(date_added) AS date_added,
+				REPLACE(json.directory, "users/", "") AS address
+			FROM messages
+
+			LEFT JOIN json USING (json_id)
+			GROUP BY json.json_id
+		""")
+
+		for message in messages:
+			last_time[message[1]] = message[0]
+
+		with open(self.cache_directory + "/last_time.json", "w") as f:
+			f.write(json.dumps(last_time))
