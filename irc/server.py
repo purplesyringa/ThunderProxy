@@ -10,6 +10,7 @@ class Server(object):
 		self.Channel = Channel
 		self.User = User
 		self.sock = None
+		self.sessions = []
 
 	def serve(self):
 		if self.sock is not None:
@@ -37,8 +38,16 @@ class Server(object):
 			self.sock = None
 
 	def run(self, conn):
+		session = None
 		try:
 			conn = Connection(conn)
-			session = Session(conn, Channel=self.Channel, User=self.User)
+			session = Session(conn, Channel=self.Channel, User=self.User, auto_init=False)
+			self.sessions.append(session)
+			session.init()
 		finally:
+			try:
+				self.sessions.remove(session)
+			except ValueError:
+				pass
+
 			conn.close()
