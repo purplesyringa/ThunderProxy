@@ -48,7 +48,10 @@ class ThunderWave(object):
 
 		return data["cert_user_id"]
 
-	def get_lobby_messages(self, address, since=0):
+	def get_lobby_messages(self, address=None, since=0):
+		if address is None:
+			return self.get_all_lobby_messages(since=since)
+
 		cert_user_id = self.get_cert_user_id(address)
 		path = "%sdata/%s/data/users/%s/data.json" % (zeronet_directory, self.address, address)
 
