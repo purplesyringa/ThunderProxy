@@ -1,6 +1,6 @@
 from channel import Channel
 from user import User
-import threading
+import threading, re
 
 import irc.server
 server = irc.server.Server("localhost", 6697, Channel=Channel, User=User)
@@ -14,7 +14,7 @@ def callback(address):
 	for message in tw.load_new_lobby_messages(address=address):
 		lobby.broadcast(
 			nick=message["cert_user_id"],
-			username=message["from_address"],
+			username=re.sub(r"^(.*)@.*$", r"\1", message["from_address"]),
 			message=message["body"]
 		)
 
