@@ -51,3 +51,8 @@ class Server(object):
 				pass
 
 			conn.close()
+
+	def broadcast(self, nick, username, to, message):
+		for session in self.sessions:
+			print "broadcast to session", session
+			session.broadcast(nick, username, to, message)

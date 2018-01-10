@@ -154,3 +154,10 @@ class Transaction(object):
 				# Private message
 				user = User(to)
 				user.send(self.nick, message)
+
+	def broadcast(self, nick, username, to, message):
+		try:
+			chan = next(chan for chan in self.channels if chan.name == to)
+			self.sendall(":%s!%s@localhost PRIVMSG %s :%s" % (nick, username, to, message))
+		except StopIteration:
+			pass
