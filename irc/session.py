@@ -4,13 +4,15 @@ from transaction import Transaction
 import re
 
 class Session(object):
-	def __init__(self, conn, Channel, User):
+	def __init__(self, conn, Channel, User, auto_init=True):
 		self.conn = conn
 		self.Channel = Channel
 		self.User = User
 		self.nick = "*"
 		self.transaction = None
-		self.init()
+
+		if auto_init:
+			self.init()
 
 	def sendall(self, *args, **kwargs):
 		return self.conn.sendall(*args, **kwargs)
