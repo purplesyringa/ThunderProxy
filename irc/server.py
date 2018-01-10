@@ -63,6 +63,7 @@ class Server(object):
 			return next(chan for chan in self.channels if chan.name == channel)
 		except StopIteration:
 			chan = self.Channel(channel)
+			chan.broadcast = lambda nick, username, message: self.broadcast(nick, username, chan.name, message)
 			self.channels.append(chan)
 			return chan
 

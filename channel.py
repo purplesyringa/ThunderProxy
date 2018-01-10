@@ -5,6 +5,7 @@ class Channel(object):
 	def __init__(self, name):
 		self.name = name
 		self.online = []
+		self.broadcast = lambda nick, username, message: None
 
 	def get_key(self):
 		return None

@@ -8,12 +8,13 @@ threading.Thread(target=server.serve).start()
 
 from thunderwave import ThunderWave
 
+lobby = server.get_channel("#lobby")
+
 def callback(address):
 	for message in tw.load_new_lobby_messages(address=address):
-		server.broadcast(
+		lobby.broadcast(
 			nick=message["cert_user_id"],
 			username=message["from_address"],
-			to="#lobby",
 			message=message["body"]
 		)
 
