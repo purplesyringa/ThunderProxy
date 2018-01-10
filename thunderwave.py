@@ -1,4 +1,4 @@
-from config import zeronet_directory
+from config import data_directory
 from zerowebsocket import ZeroWebSocket
 import json, os, sqlite3, time, errno
 
@@ -9,7 +9,7 @@ class ThunderWave(object):
 	def __init__(self):
 		self.address = "1CWkZv7fQAKxTVjZVrLZ8VHcrN6YGGcdky"
 
-		self.conn = sqlite3.connect("%sdata/%s/data/ThunderWave2.db" % (zeronet_directory, self.address))
+		self.conn = sqlite3.connect("%s/%s/data/ThunderWave2.db" % (data_directory, self.address))
 		self.cursor = self.conn.cursor()
 
 		self.cache_directory = current_directory + "/cache"
@@ -24,7 +24,7 @@ class ThunderWave(object):
 	def listen_for_file_done(self, callback):
 		# Find wrapper_key in sites.json
 		wrapper_key = None
-		with open(zeronet_directory + "data/sites.json", "r") as f:
+		with open(data_directory + "/sites.json", "r") as f:
 			sites = json.loads(f.read())
 			wrapper_key = sites[self.address]["wrapper_key"]
 
@@ -55,7 +55,7 @@ class ThunderWave(object):
 				callback(address)
 
 	def get_cert_user_id(self, address):
-		path = "%sdata/%s/data/users/%s/content.json" % (zeronet_directory, self.address, address)
+		path = "%s/%s/data/users/%s/content.json" % (data_directory, self.address, address)
 
 		data = None
 		with open(path, "r") as f:
