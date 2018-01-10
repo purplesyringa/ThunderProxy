@@ -55,7 +55,6 @@ class Server(object):
 
 	def broadcast(self, nick, username, to, message):
 		for session in self.sessions:
-			print "broadcast to session", session
 			session.broadcast(nick, username, to, message)
 
 	def get_channel(self, channel):
