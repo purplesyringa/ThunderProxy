@@ -3,14 +3,14 @@ from util import replycodes, errorcodes
 import re
 
 class Transaction(object):
-	def __init__(self, nick, username, hostname, Channel, User, conn):
+	def __init__(self, nick, username, hostname, User, conn, session, server):
 		self.nick = nick
 		self.username = username
 		self.hostname = hostname
-		self.channels = []
-		self.Channel = Channel
 		self.user = User(nick)
 		self.conn = conn
+		self.session = session
+		self.server = server
 		self.init()
 
 	def sendall(self, *args, **kwargs):
@@ -38,7 +38,7 @@ class Transaction(object):
 		channels = map(None, channels, keys) # This is like zip() but with padding
 
 		for channel in channels:
-			chan = self.get_channel(channel[0])
+			chan = self.server.get_channel(channel[0])
 			if chan.get_key() != channel[1]:
 				self.error("ERR_BADCHANNELKEY", "")
 				return
@@ -60,11 +60,6 @@ class Transaction(object):
 			self.ok("RPL_NAMREPLY", "@ %s :%s" % (channel[0], online))
 			self.ok("RPL_ENDOFNAMES", "%s :End of /NAMES list." % channel[0])
 
-	def get_channel(self, channel):
-		chan = self.Channel(channel)
-		self.channels.append(chan)
-		return chan
-
 	def commandAway(self, reason=None):
 		if reason is None:
 			self.user.set_away(False)
@@ -77,7 +72,7 @@ class Transaction(object):
 		if nick[0] in "#&":
 			# Channel
 			channel = nick
-			chan = self.get_channel(channel)
+			chan = self.server.get_channel(channel)
 
 			if len(args) == 0:
 				# Send mode
@@ -148,7 +143,7 @@ class Transaction(object):
 		for to in receivers:
 			if to[0] in "#&":
 				# Public message to channel
-				chan = self.get_channel(to)
+				chan = self.server.get_channel(to)
 				chan.send(self.nick, message)
 			else:
 				# Private message
@@ -156,8 +151,5 @@ class Transaction(object):
 				user.send(self.nick, message)
 
 	def broadcast(self, nick, username, to, message):
-		try:
-			chan = next(chan for chan in self.channels if chan.name == to)
+		if self.server.has_channel(to):
 			self.sendall(":%s!%s@localhost PRIVMSG %s :%s" % (nick, username, to, message))
-		except StopIteration:
-			pass

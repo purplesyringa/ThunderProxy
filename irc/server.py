@@ -11,6 +11,7 @@ class Server(object):
 		self.User = User
 		self.sock = None
 		self.sessions = []
+		self.channels = []
 
 	def serve(self):
 		if self.sock is not None:
@@ -41,7 +42,7 @@ class Server(object):
 		session = None
 		try:
 			conn = Connection(conn)
-			session = Session(conn, Channel=self.Channel, User=self.User, auto_init=False)
+			session = Session(conn, User=self.User, server=self, auto_init=False)
 			self.sessions.append(session)
 			session.init()
 		finally:
@@ -56,3 +57,18 @@ class Server(object):
 		for session in self.sessions:
 			print "broadcast to session", session
 			session.broadcast(nick, username, to, message)
+
+	def get_channel(self, channel):
+		try:
+			return next(chan for chan in self.channels if chan.name == channel)
+		except StopIteration:
+			chan = self.Channel(channel)
+			self.channels.append(chan)
+			return chan
+
+	def has_channel(self, channel):
+		try:
+			next(chan for chan in self.channels if chan.name == channel)
+			return True
+		except StopIteration:
+			return False

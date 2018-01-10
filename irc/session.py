@@ -4,10 +4,10 @@ from transaction import Transaction
 import re
 
 class Session(object):
-	def __init__(self, conn, Channel, User, auto_init=True):
+	def __init__(self, conn, User, server, auto_init=True):
 		self.conn = conn
-		self.Channel = Channel
 		self.User = User
+		self.server = server
 		self.nick = "*"
 		self.transaction = None
 
@@ -90,8 +90,8 @@ class Session(object):
 
 		self.transaction = Transaction(
 			self.nick, self.username, self.hostname,
-			Channel=self.Channel, User=self.User,
-			conn=self.conn
+			User=self.User, conn=self.conn,
+			session=self, server=self.server
 		)
 
 	def commandPing(self, server):
