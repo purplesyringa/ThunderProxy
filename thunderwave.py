@@ -51,7 +51,7 @@ class ThunderWave(object):
 
 		return data["cert_user_id"]
 
-	def get_lobby_messages(self, since=0):
+	def get_lobby_messages(self, address=None, since=0):
 		messages = self.cursor.execute("""
 			SELECT
 				key, date_added, body,
@@ -61,9 +61,9 @@ class ThunderWave(object):
 
 			LEFT JOIN json USING (json_id)
 
-			WHERE date_added > ?
+			WHERE date_added > ? AND %s
 			ORDER BY date_added ASC
-		""", (since,))
+		""" % ("from_address = ?" if address is not None else "1 = 1"), (since,) if address is None else (since, address))
 
 		messages = [message for message in messages]
 
