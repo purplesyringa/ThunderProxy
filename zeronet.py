@@ -53,15 +53,40 @@ def sign(address, content):
 		except KeyError:
 			raise TypeError("Private key for zeroid.bit not found in users.json")
 
-	from Site import Site
-	site = Site(address, allow_create=False)
+	# Check for lock
+	from util import helper
 
-	site.content_manager.sign(
-		inner_path=content,
-		privatekey=privatekey,
-		update_changed_files=True,
-		remove_missing_optional=False
-	)
+	try:
+		with helper.openLocked("%s/lock.pid" % data_directory, "w") as f:
+			pass
+
+		# Could get lock; let's run normal sitePublish then
+		from Site import Site
+		site = Site(address, allow_create=False)
+
+		site.content_manager.sign(
+			inner_path=content,
+			privatekey=privatekey,
+			update_changed_files=True,
+			remove_missing_optional=False
+		)
+	except IOError:
+		# Could not get lock
+		sign_socket(address, content, privatekey)
+
+def sign_socket(address, content, privatekey):
+	# Sign file via ZeroWebSocket
+
+	# Find wrapper_key in sites.json
+	wrapper_key = None
+	with open(data_directory + "/sites.json", "r") as f:
+		sites = json.loads(f.read())
+		wrapper_key = sites[address]["wrapper_key"]
+
+	# Access WebSocket
+	from zerowebsocket import ZeroWebSocket
+	with ZeroWebSocket(wrapper_key) as ws:
+		ws.siteSign(inner_path=content, privatekey=privatekey, update_changed_files=True)
 
 def publish(address, content):
 	# Check for lock
