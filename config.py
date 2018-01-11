@@ -16,7 +16,7 @@ import Config
 Config.config.debug = False
 Config.config.debug_gevent = False
 Config.config.use_tempfiles = False
-Config.config.data_dir = zeronet_directory.replace("\\", "/") + "data"
+Config.config.data_dir = data_directory.replace("\\", "/")
 Config.config.db_mode = "speed"
 Config.config.language = "en"
 Config.config.fileserver_port = "15441"
