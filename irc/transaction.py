@@ -144,11 +144,11 @@ class Transaction(object):
 			if to[0] in "#&":
 				# Public message to channel
 				chan = self.server.get_channel(to)
-				chan.send(self.nick, message)
+				chan.send(self.nick, self.username, message)
 			else:
 				# Private message
 				user = User(to)
-				user.send(self.nick, message)
+				user.send(self.nick, self.username, message)
 
 	def broadcast(self, nick, username, to, message):
 		if self.server.has_channel(to):

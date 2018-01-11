@@ -25,5 +25,5 @@ class User(object):
 		raise NotImplementedError()
 
 	# Messages
-	def send(self, from_, message):
+	def send(self, nick, username, message):
 		pass
