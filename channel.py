@@ -57,6 +57,15 @@ class Channel(object):
 			try:
 				address = self.tw.from_cert_user_id(nick)
 			except KeyError:
+				errmsg = """
+					Hello, %s!
+					Unfortunately, ThunderProxy could not find
+					correct auth_address for your nickname.
+					Make sure that your nick is set like
+					gitcenter@zeroid.bit or glightstar@kaffie.bit.
+					With regards, Ivanq.
+				""".replace("\n", " ").replace("\t", "") % nick
+				self.broadcast("ThunderProxy", "tp", errmsg)
 				return
 
 			self.tw.send_to_lobby(address=address, body=message)
