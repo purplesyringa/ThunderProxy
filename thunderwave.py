@@ -64,6 +64,17 @@ class ThunderWave(object):
 			data = json.loads(f.read())
 
 		return data["cert_user_id"]
+	def from_cert_user_id(self, cert_user_id):
+		jsons = self.sql("""
+			SELECT directory
+			FROM json
+			WHERE cert_user_id = ?
+		""", (cert_user_id,))
+
+		for json in jsons:
+			return json[0].replace("users/", "")
+
+		raise KeyError("No auth_address for cert_user_id %s" % cert_user_id)
 
 	def get_lobby_messages(self, address=None, since=0):
 		messages = self.sql("""
