@@ -1,6 +1,7 @@
 from config import data_directory
 from zerowebsocket import ZeroWebSocket
-import json, os, sqlite3, time, errno
+import json, os, sqlite3, time, errno, random
+import zeronet
 
 current_directory = os.path.dirname(os.path.realpath(__file__))
 
@@ -155,3 +156,38 @@ class ThunderWave(object):
 
 		with open(self.cache_directory + "/last_time.json", "w") as f:
 			f.write(json.dumps(last_time))
+
+	def send_to_lobby(self, address, body):
+		path = "%s/%s/data/users/%s/data.json" % (data_directory, self.address, address)
+
+		data = None
+		with open(path, "r") as f:
+			data = json.loads(f.read())
+
+		data["messages"].append(dict(
+			body=body,
+			date_added=time.time() * 1000,
+			key=self.generate_key()
+		))
+
+		with open(path, "w") as f:
+			f.write(json.dumps(data, indent=4))
+
+		self.sign("data/users/" + address + "/content.json")
+	def sign(self, content):
+		zeronet.sign(self.address, content)
+		zeronet.publish(self.address, content)
+
+	def generate_key(self):
+		res = "thunderproxy-"
+
+		for c in "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx":
+			r = random.randint(0, 15)
+			if c == "x":
+				res += hex(r)[2]
+			elif c == "y":
+				res += hex(r & 0x3 | 0x8)[2]
+			else:
+				res += c
+
+		return res
