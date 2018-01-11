@@ -1,7 +1,9 @@
+from irc.util import NickError
+from thunderwave import ThunderWave
+
 class User(object):
 	def __init__(self, nick):
 		self.nick = nick
-
 		self.is_away = False
 		self.away_reason = None
 
@@ -27,3 +29,12 @@ class User(object):
 	# Messages
 	def send(self, nick, username, message):
 		pass
+
+	@staticmethod
+	def check_nick(nick):
+		tw = ThunderWave()
+		try:
+			tw.from_cert_user_id(nick)
+			return True
+		except KeyError:
+			raise NickError("Incorrect nick. Make sure that your nick is set like gitcenter@zeroid.bit or glightstar@kaffie.bit.")

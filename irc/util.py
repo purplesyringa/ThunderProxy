@@ -15,6 +15,8 @@ class ServerError(Exception):
 	pass
 class CommandError(Exception):
 	pass
+class NickError(Exception):
+	pass
 
 replycodes = dict(
 	RPL_WELCOME = "001",

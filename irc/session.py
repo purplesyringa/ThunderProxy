@@ -1,4 +1,4 @@
-from util import debug, critical, ServerError, CommandError
+from util import debug, critical, ServerError, CommandError, NickError
 from util import replycodes, errorcodes
 from transaction import Transaction
 import re
@@ -80,7 +80,11 @@ class Session(object):
 		return dict(command=command, params=params)
 
 	def commandNick(self, nick):
-		self.nick = nick
+		try:
+			self.User.check_nick(nick)
+			self.nick = nick
+		except NickError as e:
+			self.error("ERR_ERRONEUSNICKNAME", str(e))
 
 	def commandUser(self, username, hostname, servername, realname):
 		self.username = username
