@@ -1,4 +1,4 @@
-import json, cryptlib
+import json
 
 from config import data_directory
 
@@ -21,6 +21,7 @@ def guess_private_key():
 				publickey = None
 				keyname = [key for key in zeromail.keys() if "encrypt_publickey" in key]
 				if len(keyname) == 0:
+					import cryptlib
 					publickey = cryptlib.private_to_public(privatekey)
 				elif len(keyname) != 1:
 					return (zeroid, None, None)
