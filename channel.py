@@ -1,10 +1,12 @@
 from user import User
 import time
+from thunderwave import ThunderWave
 
 class Channel(object):
 	def __init__(self, name):
 		self.name = name
 		self.online = []
+		self.tw = ThunderWave()
 		self.broadcast = lambda nick, username, message: None
 
 	def get_key(self):
@@ -49,5 +51,12 @@ class Channel(object):
 		raise NotImplementedError()
 
 	# Messages
-	def send(self, from_, message):
-		pass
+	def send(self, nick, username, message):
+		if self.name == "#lobby":
+			address = None
+			try:
+				address = self.tw.from_cert_user_id(nick)
+			except KeyError:
+				return
+
+			self.tw.send_to_lobby(address=address, body=message)
