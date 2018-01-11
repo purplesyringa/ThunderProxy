@@ -13,7 +13,10 @@ class Channel(object):
 		return None
 
 	def get_topic(self):
-		return None
+		if self.name == "#lobby":
+			return "ThunderWave lobby"
+		else:
+			return ""
 
 	def get_online(self):
 		return self.online

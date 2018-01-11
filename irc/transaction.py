@@ -45,6 +45,8 @@ class Transaction(object):
 
 			chan.connect(self.nick)
 
+			self.ok("RPL_TOPIC", "%s :%s" % (channel[0], chan.get_topic()))
+
 			# Specify online users
 			online = chan.get_online()
 			online = [(nick, chan.get_user(nick)) for nick in online]
