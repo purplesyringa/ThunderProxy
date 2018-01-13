@@ -13,7 +13,7 @@ lobby = server.get_channel("#lobby")
 def callback(address):
 	for message in tw.load_new_lobby_messages(address=address):
 		lobby.broadcast(
-			nick=message["cert_user_id"],
+			nick=message["cert_user_id"].replace("@", "/"),
 			username=re.sub(r"^(.*)@.*$", r"\1", message["from_address"]),
 			message=message["body"]
 		)
