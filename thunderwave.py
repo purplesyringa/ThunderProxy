@@ -202,3 +202,11 @@ class ThunderWave(object):
 				res += c
 
 		return res
+
+class Singleton(ThunderWave):
+	tw = None
+
+	def __new__(Singleton):
+		if Singleton.tw is None:
+			Singleton.tw = ThunderWave()
+		return Singleton.tw
