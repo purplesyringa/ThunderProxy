@@ -18,6 +18,7 @@ class ThunderWave(object):
 				raise
 
 		self.update_cache_time()
+		self.ignore_addresses = dict()
 
 	def sql(self, query, params=()):
 		conn = sqlite3.connect("%s/%s/data/ThunderWave2.db" % (data_directory, self.address))
@@ -103,6 +104,10 @@ class ThunderWave(object):
 				from_address=message[4]
 			)
 
+			if message["from_address"] in self.ignore_addresses:
+				if message["key"] in self.ignore_addresses[message["from_address"]]:
+					continue
+
 			new_messages.append(message)
 		messages = new_messages
 
@@ -160,6 +165,12 @@ class ThunderWave(object):
 	def send_to_lobby(self, address, body):
 		path = "%s/%s/data/users/%s/data.json" % (data_directory, self.address, address)
 
+		key = self.generate_key()
+
+		if address not in self.ignore_addresses:
+			self.ignore_addresses[address] = []
+		self.ignore_addresses[address].append(key)
+
 		data = None
 		with open(path, "r") as f:
 			data = json.loads(f.read())
@@ -167,7 +178,7 @@ class ThunderWave(object):
 		data["messages"].append(dict(
 			body=body,
 			date_added=time.time() * 1000,
-			key=self.generate_key()
+			key=key
 		))
 
 		with open(path, "w") as f:
