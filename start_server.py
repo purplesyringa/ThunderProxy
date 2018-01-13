@@ -6,7 +6,7 @@ import irc.server
 server = irc.server.Server("localhost", 6697, Channel=Channel, User=User)
 threading.Thread(target=server.serve).start()
 
-from thunderwave import ThunderWave
+from thunderwave import Singleton as ThunderWave
 
 lobby = server.get_channel("#lobby")
 

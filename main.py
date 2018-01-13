@@ -1,4 +1,4 @@
-from thunderwave import ThunderWave
+from thunderwave import Singleton as ThunderWave
 import datetime
 
 tw = ThunderWave()

@@ -1,6 +1,6 @@
 from user import User
 import time
-from thunderwave import ThunderWave
+from thunderwave import Singleton as ThunderWave
 
 class Channel(object):
 	def __init__(self, name):

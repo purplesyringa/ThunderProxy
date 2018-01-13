@@ -1,5 +1,5 @@
 from irc.util import NickError
-from thunderwave import ThunderWave
+from thunderwave import Singleton as ThunderWave
 
 class User(object):
 	def __init__(self, nick):
