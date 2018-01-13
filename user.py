@@ -32,9 +32,4 @@ class User(object):
 
 	@staticmethod
 	def check_nick(nick):
-		tw = ThunderWave()
-		try:
-			tw.from_cert_user_id(nick)
-			return True
-		except KeyError:
-			raise NickError("Incorrect nick. Make sure that your nick is set like gitcenter@zeroid.bit or glightstar@kaffie.bit.")
+		return True
