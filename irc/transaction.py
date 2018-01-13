@@ -88,6 +88,8 @@ class Transaction(object):
 			self.ok("RPL_NAMREPLY", "@ %s :%s" % (channel[0], online))
 			self.ok("RPL_ENDOFNAMES", "%s :End of /NAMES list." % channel[0])
 
+			self.sendall(":%s!%s@%s JOIN %s" % (self.nick, self.username, self.hostname, channel[0]))
+
 	def commandAway(self, reason=None):
 		if reason is None:
 			self.user.set_away(False)
