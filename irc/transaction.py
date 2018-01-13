@@ -30,6 +30,29 @@ class Transaction(object):
 			"RPL_WELCOME",
 			":Welcome to the Internet Relay Network %s!%s@%s" % (self.nick, self.username, self.hostname)
 		)
+		self.ok("RPL_YOURHOST", ":Your host is localhost[127.0.0.1/6697], running version py-irc-1.0")
+		self.ok("RPL_CREATED", ":This server was created Mon Jan 8 2018 at 2:55:16 EST")
+		self.ok("RPL_MYINFO", "localhost py-irc-1.0 psitm iswo blvo")
+		self.ok(
+			"RPL_ISUPPORT",
+			"PREFIX=(ov)@+ CHANTYPES=#& CHANMODES=eIbq,k,flj,CFLMPQScgimnprstz MODES=3 MAXCHANNELS=1000 CHANLIMIT=#&:1000 :are supported by this server"
+		)
+		self.ok(
+			"RPL_ISUPPORT",
+			"NICKLEN=1000 MAXBANS=1000 MAXLIST=beI:1000 NETWORK=ThunderWave CASEMAPPING=ascii ELIST=MN TOPICLEN=1000 :are supported by this server"
+		)
+		self.ok(
+			"RPL_ISUPPORT",
+			"KICKLEN=1000 CHANNELLEN=1000 AWAYLEN=1000 MAXTARGETS=1 :are supported by this server"
+		)
+		self.ok("RPL_LUSERCLIENT", ":There are 1 users and 0 invisible on 1 servers")
+		self.ok("RPL_LUSEROP", "0 :IRC Operators online")
+		self.ok("RPL_LUSERUNKNOWN", "0 :unknown connection(s)")
+		self.ok("RPL_LUSERCHANNELS", "1 :channels formed")
+		self.ok("RPL_LUSERME", ":I have 1 clients and 1 servers")
+		self.ok("RPL_LOCALUSERS", "1 1 :Current local users 1, max 1")
+		self.ok("RPL_GLOBALUSERS", "1 1 :Current global users 1, max 1")
+		self.ok("RPL_STATSCONN", ":Highest connection count: 2 (1 clients) (1 connections received)")
 
 	def commandJoin(self, channels, keys=None):
 		channels = channels.split(",")
