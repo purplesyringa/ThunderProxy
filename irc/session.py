@@ -45,10 +45,16 @@ class Session(object):
 			transaction = self.transaction or self
 			if command in dir(transaction):
 				getattr(transaction, command)(*message["params"])
-			elif command == "commandPing":
-				self.commandPing(*message["params"])
+			elif command in ["commandPing", "commandCap"]:
+				getattr(self, command)(*message["params"])
 			else:
 				transaction.error("ERR_UNKNOWNCOMMAND", message["command"])
+
+	def commandCap(self, cmd, *args):
+		if cmd == "LS":
+			self.reply("CAP", "LS :account-notify extended-join identify-msg sasl")
+		elif cmd == "END":
+			pass
 
 	def parseMessage(self, message):
 		prefix = None
