@@ -178,5 +178,11 @@ class Transaction(object):
 				user.send(self.nick, self.username, message)
 
 	def broadcast(self, nick, username, to, message):
+		# Handle multi-line messages
+		if "\r\n" in message:
+			for line in message.split("\r\n"):
+				self.broadcast(nick, username, to, line)
+			return
+
 		if self.server.has_channel(to):
 			self.sendall(":%s!%s@localhost PRIVMSG %s :%s" % (nick, username, to, message))
