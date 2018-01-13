@@ -11,6 +11,7 @@ class Transaction(object):
 		self.conn = conn
 		self.session = session
 		self.server = server
+		self.channels = []
 		self.init()
 
 	def sendall(self, *args, **kwargs):
@@ -61,6 +62,7 @@ class Transaction(object):
 		channels = map(None, channels, keys) # This is like zip() but with padding
 
 		for channel in channels:
+			self.channels.append(channel[0])
 			chan = self.server.get_channel(channel[0])
 			if chan.get_key() != channel[1]:
 				self.error("ERR_BADCHANNELKEY", "")
@@ -184,5 +186,10 @@ class Transaction(object):
 				self.broadcast(nick, username, to, line)
 			return
 
-		if self.server.has_channel(to):
+		if to in self.channels:
 			self.sendall(":%s!%s@localhost PRIVMSG %s :%s" % (nick, username, to, message))
+
+	def finish(self):
+		for channel in self.channels:
+			chan = self.server.get_channel(channel)
+			chan.disconnect(self.nick)

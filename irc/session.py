@@ -35,6 +35,8 @@ class Session(object):
 				continue
 
 			if message == "QUIT":
+				if self.transaction is not None:
+					self.transaction.finish()
 				break
 
 			message = self.parseMessage(message)
