@@ -31,7 +31,8 @@ class Channel(object):
 		return 1491048465079
 
 	def connect(self, nick):
-		self.online.append(nick)
+		if nick not in self.online:
+			self.online.append(nick)
 
 	# Modes
 	def set_banmask(self, banmask):
