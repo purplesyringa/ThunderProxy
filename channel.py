@@ -28,7 +28,7 @@ class Channel(object):
 		return "+cnt"
 
 	def get_creation_time(self):
-		return int(time.time())
+		return 1491048465079
 
 	def connect(self, nick):
 		self.online.append(nick)
