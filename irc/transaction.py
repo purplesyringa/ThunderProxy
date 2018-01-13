@@ -68,7 +68,9 @@ class Transaction(object):
 
 			chan.connect(self.nick)
 
-			self.ok("RPL_TOPIC", "%s :%s" % (channel[0], chan.get_topic()))
+			topic = chan.get_topic()
+			self.ok("RPL_TOPIC", "%s :%s" % (channel[0], topic["topic"]))
+			self.ok("RPL_TOPICWHOTIME", "%s %s %s" % (channel[0], topic["author"], int(topic["time"] / 1000)))
 
 			# Specify online users
 			online = chan.get_online()
@@ -102,7 +104,7 @@ class Transaction(object):
 			if len(args) == 0:
 				# Send mode
 				self.ok("RPL_CHANNELMODEIS", "%s %s" % (channel, chan.get_mode()))
-				self.ok("RPL_CREATIONTIME", "%s %s" % (channel, chan.get_creation_time()))
+				self.ok("RPL_CREATIONTIME", "%s %s" % (channel, int(chan.get_creation_time() / 1000)))
 				return
 		else:
 			# User

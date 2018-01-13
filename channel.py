@@ -14,9 +14,9 @@ class Channel(object):
 
 	def get_topic(self):
 		if self.name == "#lobby":
-			return "ThunderWave lobby"
+			return dict(topic="ThunderWave lobby", author="glightstar!glightstar@localhost", time=1491048465079)
 		else:
-			return ""
+			return dict(topic="", author="", time=0)
 
 	def get_online(self):
 		return self.online
