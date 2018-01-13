@@ -66,7 +66,6 @@ class Transaction(object):
 			chan = self.server.get_channel(channel[0])
 			if chan.get_key() != channel[1]:
 				self.error("ERR_BADCHANNELKEY", "")
-				return
 
 			chan.connect(self.nick)
 
