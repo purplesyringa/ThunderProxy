@@ -1,4 +1,4 @@
-from util import debug, critical, ServerError, CommandError
+from util import debug, critical, ServerError, CommandError, NickError
 from util import replycodes, errorcodes
 import re
 
@@ -50,6 +50,14 @@ class Transaction(object):
 		self.ok("RPL_LOCALUSERS", "1 1 :Current local users 1, max 1")
 		self.ok("RPL_GLOBALUSERS", "1 1 :Current global users 1, max 1")
 		self.ok("RPL_STATSCONN", ":Highest connection count: 2 (1 clients) (1 connections received)")
+
+	def commandNick(self, nick):
+		try:
+			self.server.User.check_nick(nick)
+			self.sendall(":%s!%s@%s NICK %s" % (self.nick, self.username, self.hostname, nick))
+			self.nick = nick
+		except NickError as e:
+			self.error("ERR_ERRONEUSNICKNAME", str(e))
 
 	def commandJoin(self, channels, keys=None):
 		channels = channels.split(",")
