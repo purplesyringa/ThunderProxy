@@ -4,9 +4,6 @@ import re
 
 class Transaction(object):
 	def __init__(self, nick, username, hostname, conn, session, server):
-		self.nick = nick
-		self.username = username
-		self.hostname = hostname
 		self.user = server.register_user(nick, username, hostname, self)
 		self.conn = conn
 		self.session = session
@@ -19,7 +16,7 @@ class Transaction(object):
 		return self.conn.recvall(*args, **kwargs)
 
 	def reply(self, code, data):
-		self.sendall(":localhost %s %s %s" % (code, self.nick, data))
+		self.sendall(":localhost %s %s %s" % (code, self.user.nick, data))
 	def error(self, code, data):
 		self.reply(errorcodes[code][0], "%s %s" % (errorcodes[code][1], data))
 	def ok(self, code, data):
@@ -28,7 +25,7 @@ class Transaction(object):
 	def init(self):
 		self.ok(
 			"RPL_WELCOME",
-			":Welcome to the Internet Relay Network %s!%s@%s" % (self.nick, self.username, self.hostname)
+			":Welcome to the Internet Relay Network %s!%s@%s" % (self.user.nick, self.user.username, self.user.hostname)
 		)
 		self.ok("RPL_YOURHOST", ":Your host is localhost[127.0.0.1/6697], running version py-irc-1.0")
 		self.ok("RPL_CREATED", ":This server was created Mon Jan 8 2018 at 2:55:16 EST")
@@ -85,7 +82,7 @@ class Transaction(object):
 			self.ok("RPL_NAMREPLY", "@ %s :%s" % (channel[0], online))
 			self.ok("RPL_ENDOFNAMES", "%s :End of /NAMES list." % channel[0])
 
-			self.sendall(":%s!%s@%s JOIN %s" % (self.nick, self.username, self.hostname, channel[0]))
+			self.sendall(":%s!%s@%s JOIN %s" % (self.user.nick, self.user.username, self.user.hostname, channel[0]))
 
 	def commandAway(self, reason=None):
 		if reason is None:
@@ -108,7 +105,7 @@ class Transaction(object):
 				return
 		else:
 			# User
-			if nick != self.nick:
+			if nick != self.user.nick:
 				self.error("ERR_USERSDONTMATCH", "")
 				return
 
@@ -171,10 +168,10 @@ class Transaction(object):
 			if to[0] in "#&":
 				# Public message to channel
 				chan = self.server.get_channel(to)
-				chan.send(self.nick, self.username, message)
+				chan.send(self.user.nick, self.user.username, message)
 			else:
 				# Private message
-				self.server.get_user(to).send(self.nick, self.username, message)
+				self.server.get_user(to).send(self.user.nick, self.user.username, message)
 
 	def commandUserhost(self, *users):
 		replies = []

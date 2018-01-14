@@ -20,7 +20,8 @@ class Session(object):
 		return self.conn.recvall(*args, **kwargs)
 
 	def reply(self, code, data):
-		self.sendall(":localhost %s %s %s" % (code, self.nick, data))
+		nick = self.nick if self.transaction is None else self.transaction.user.nick
+		self.sendall(":localhost %s %s %s" % (code, nick, data))
 	def error(self, code, data):
 		self.reply(errorcodes[code][0], "%s %s" % (errorcodes[code][1], data))
 	def ok(self, code, data):
