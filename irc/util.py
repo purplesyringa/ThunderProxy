@@ -116,6 +116,10 @@ replycodes = dict(
 	RPL_USERS = 393,
 	RPL_ENDOFUSERS = 394,
 	RPL_NOUSERS = 395,
+	RPL_LOGGEDIN = 900,
+	RPL_LOGGEDOUT = 901,
+	RPL_SASLSUCCESS = 903,
+	RPL_SASLMECHS = 908
 )
 
 errorcodes = dict(
@@ -165,5 +169,10 @@ errorcodes = dict(
 	ERR_NOOPERHOST = (491, ":No O-lines for your host"),
 	ERR_NOSERVICEHOST = (492, ""),
 	ERR_UMODEUNKNOWNFLAG = (501, ":Unknown MODE flag"),
-	ERR_USERSDONTMATCH = (502, ":Cant change mode for other users")
+	ERR_USERSDONTMATCH = (502, ":Cant change mode for other users"),
+	ERR_NICKLOCKED = (902, ""),
+	ERR_SASLFAIL = (904, ""),
+	ERR_SASLTOOLONG = (905, ""),
+	ERR_SASLABORTED = (906, ""),
+	ERR_SASLALREADY = (907, "")
 )
