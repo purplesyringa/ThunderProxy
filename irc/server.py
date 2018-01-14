@@ -54,16 +54,11 @@ class Server(object):
 
 			conn.close()
 
-	def broadcast(self, nick, username, to, message):
-		for session in self.sessions:
-			session.broadcast(nick, username, to, message)
-
 	def get_channel(self, channel):
 		try:
 			return next(chan for chan in self.channels if chan.name == channel)
 		except StopIteration:
 			chan = self.Channel(channel)
-			chan.broadcast = lambda nick, username, message: self.broadcast(nick, username, chan.name, message)
 			self.channels.append(chan)
 			return chan
 
@@ -77,10 +72,13 @@ class Server(object):
 	def get_user(self, nick):
 		return next(user for user in self.users if user.nick == nick)
 
-	def register_user(self, nick, username, hostname):
+	def register_user(self, nick, username, hostname, transaction):
+		user = None
 		try:
-			return self.get_user(nick)
+			user = self.get_user(nick)
 		except StopIteration:
 			user = self.User(nick=nick, username=username, hostname=hostname)
 			self.users.append(user)
-			return user
+
+		user.connect(transaction)
+		return user

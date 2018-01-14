@@ -7,7 +7,6 @@ class Channel(object):
 		self.name = name
 		self.online = []
 		self.tw = ThunderWave()
-		self.broadcast = lambda nick, username, message: None
 
 	def get_key(self):
 		return None
@@ -27,11 +26,11 @@ class Channel(object):
 	def get_creation_time(self):
 		return 1491048465079
 
-	def connect(self, nick):
-		self.online.append(nick)
-	def disconnect(self, nick):
+	def connect(self, user):
+		self.online.append(user)
+	def disconnect(self, user):
 		try:
-			self.online.remove(nick)
+			self.online.remove(user)
 		except ValueError:
 			pass
 
@@ -55,6 +54,10 @@ class Channel(object):
 	def set_moderated(self, value):
 		raise NotImplementedError()
 
+	def broadcast(self, nick, username, hostname, message):
+		for user in self.online:
+			user.receivePrivMsg(nick, username, hostname, message, chan=self)
+
 	# Messages
 	def send(self, nick, username, message):
 		if self.name == "#lobby":
@@ -70,7 +73,7 @@ class Channel(object):
 					gitcenter/zeroid.bit or glightstar/kaffie.bit.
 					With regards, Ivanq.
 				""".replace("\n", " ").replace("\t", "") % nick
-				self.broadcast("ThunderProxy", "tp", errmsg)
+				self.broadcast("ThunderProxy", "tp", "localhost", errmsg, chan=self)
 				return
 
 			self.tw.send_to_lobby(address=address, body=message)

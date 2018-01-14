@@ -15,6 +15,7 @@ def callback(address):
 		lobby.broadcast(
 			nick=message["cert_user_id"].replace("@", "/"),
 			username=message["from_address"],
+			hostname="remote",
 			message=message["body"].replace("\n", "\r\n")
 		)
 

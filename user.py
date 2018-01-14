@@ -8,10 +8,22 @@ class User(object):
 		self.hostname = hostname
 		self.is_away = False
 		self.away_reason = None
+		self.channels = []
+		self.transactions = []
 
 	def set_away(self, is_away, reason=None):
 		self.is_away = is_away
 		self.away_reason = reason
+
+	def join(self, chan):
+		self.channels.append(chan)
+	def part(self, chan):
+		self.channels.remove(chan)
+
+	def connect(self, transaction):
+		self.transactions.append(transaction)
+	def disconnect(self, transaction):
+		self.transactions.remove(transaction)
 
 	def is_admin(self):
 		return False
@@ -31,6 +43,16 @@ class User(object):
 	# Messages
 	def send(self, nick, username, message):
 		pass
+
+	def receivePrivMsg(self, nick, username, hostname, message, chan=None):
+		to = None
+		if chan is None:
+			to = self.nick
+		else:
+			to = chan.name
+
+		for transaction in self.transactions:
+			transaction.sendall(":%s!%s@%s PRIVMSG %s :%s" % (nick, username, hostname, to, message))
 
 	@staticmethod
 	def check_nick(nick):
