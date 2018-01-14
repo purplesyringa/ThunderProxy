@@ -107,9 +107,3 @@ class Session(object):
 
 	def commandPing(self, server):
 		self.sendall(":localhost PONG localhost :%s" % server)
-
-	def broadcast(self, nick, username, to, message):
-		if self.transaction is None:
-			return
-
-		self.transaction.broadcast(nick, username, to, message)

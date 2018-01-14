@@ -7,11 +7,10 @@ class Transaction(object):
 		self.nick = nick
 		self.username = username
 		self.hostname = hostname
-		self.user = server.register_user(nick, username, hostname)
+		self.user = server.register_user(nick, username, hostname, self)
 		self.conn = conn
 		self.session = session
 		self.server = server
-		self.channels = []
 		self.init()
 
 	def sendall(self, *args, **kwargs):
@@ -62,26 +61,24 @@ class Transaction(object):
 		channels = map(None, channels, keys) # This is like zip() but with padding
 
 		for channel in channels:
-			self.channels.append(channel[0])
 			chan = self.server.get_channel(channel[0])
 			if chan.get_key() != channel[1]:
 				self.error("ERR_BADCHANNELKEY", "")
 
-			chan.connect(self.nick)
+			chan.connect(self.user)
+			self.user.join(chan)
 
 			topic = chan.get_topic()
 			self.ok("RPL_TOPIC", "%s :%s" % (channel[0], topic["topic"]))
 			self.ok("RPL_TOPICWHOTIME", "%s %s %s" % (channel[0], topic["author"], int(topic["time"] / 1000)))
 
 			# Specify online users
-			online = chan.get_online()
-			online = [(nick, self.server.get_user(nick)) for nick in online]
 			online = [
-				"@" + user[0] if user[1].is_admin() else
-				"+" + user[0] if user[1].is_moderator() else
-				user[0]
+				"@" + user.nick if user.is_admin() else
+				"+" + user.nick if user.is_moderator() else
+				user.nick
 
-				for user in online
+				for user in chan.get_online()
 			]
 			online = " ".join(online)
 
@@ -188,17 +185,9 @@ class Transaction(object):
 
 		self.ok("RPL_USERHOST", " ".join(replies))
 
-	def broadcast(self, nick, username, to, message):
-		# Handle multi-line messages
-		if "\r\n" in message:
-			for line in message.split("\r\n"):
-				self.broadcast(nick, username, to, line)
-			return
-
-		if to in self.channels:
-			self.sendall(":%s!%s@localhost PRIVMSG %s :%s" % (nick, username, to, message))
-
 	def finish(self):
-		for channel in self.channels:
-			chan = self.server.get_channel(channel)
-			chan.disconnect(self.nick)
+		channels = list(self.user.channels)
+		for chan in channels:
+			chan.disconnect(self.user)
+			self.user.part(chan)
+		self.user.disconnect(self)
