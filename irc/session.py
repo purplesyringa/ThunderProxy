@@ -54,7 +54,7 @@ class Session(object):
 
 	def commandCap(self, cmd, *args):
 		if cmd == "LS":
-			self.reply("CAP", "LS :account-notify extended-join identify-msg sasl")
+			self.reply("CAP", "LS :sasl")
 		elif cmd == "END":
 			pass
 
