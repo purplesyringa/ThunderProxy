@@ -59,11 +59,11 @@ class Channel(object):
 			user.receivePrivMsg(nick, username, hostname, message, chan=self)
 
 	# Messages
-	def send(self, nick, username, hostname, message):
+	def send(self, user, message):
 		if self.name == "#lobby":
 			address = None
 			try:
-				address = self.tw.from_cert_user_id(nick.replace("/", "@"))
+				address = self.tw.from_cert_user_id(user.nick.replace("/", "@"))
 			except KeyError:
 				errmsg = """
 					Hello, %s!
@@ -72,7 +72,7 @@ class Channel(object):
 					Make sure that your nick is set like
 					gitcenter/zeroid.bit or glightstar/kaffie.bit.
 					With regards, Ivanq.
-				""".replace("\n", " ").replace("\t", "") % nick
+				""".replace("\n", " ").replace("\t", "") % user.nick
 				self.broadcast("ThunderProxy", "tp", "localhost", errmsg, chan=self)
 				return
 
