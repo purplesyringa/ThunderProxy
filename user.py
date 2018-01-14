@@ -2,7 +2,7 @@ from irc.util import NickError
 from thunderwave import Singleton as ThunderWave
 
 class User(object):
-	def __init__(self, nick, username, hostname):
+	def __init__(self, nick, username, hostname, server):
 		self.nick = nick
 		self.username = username
 		self.hostname = hostname

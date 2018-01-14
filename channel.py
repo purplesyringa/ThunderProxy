@@ -3,7 +3,7 @@ import time
 from thunderwave import Singleton as ThunderWave
 
 class Channel(object):
-	def __init__(self, name):
+	def __init__(self, name, server):
 		self.name = name
 		self.online = []
 		self.tw = ThunderWave()
