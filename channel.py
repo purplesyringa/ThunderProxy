@@ -58,6 +58,9 @@ class Channel(object):
 	def receiveMsg(self, user, message):
 		for to in self.online:
 			to.receivePrivMsg(user, message, chan=self)
+	def broadcast(self, data):
+		for to in self.online:
+			to.broadcast(data)
 
 	# Messages
 	def send(self, user, message):

@@ -51,8 +51,10 @@ class User(object):
 		else:
 			to = chan.name
 
+		self.broadcast(user, "PRIVMSG %s :%s" % (to, message))
+	def broadcast(self, user, data):
 		for transaction in self.transactions:
-			transaction.sendall(":%s!%s@%s PRIVMSG %s :%s" % (user.nick, user.username, user.hostname, to, message))
+			transaction.sendall(":%s!%s@%s %s" % (user.nick, user.username, user.hostname, data))
 
 	@staticmethod
 	def check_nick(nick):
