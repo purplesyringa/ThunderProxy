@@ -162,7 +162,7 @@ class ThunderWave(object):
 		with open(self.cache_directory + "/last_time.json", "w") as f:
 			f.write(json.dumps(last_time))
 
-	def send_to_lobby(self, address, body):
+	def send_to_lobby(self, address, body, privatekey):
 		path = "%s/%s/data/users/%s/data.json" % (data_directory, self.address, address)
 
 		key = self.generate_key()
@@ -184,10 +184,10 @@ class ThunderWave(object):
 		with open(path, "w") as f:
 			f.write(json.dumps(data, indent=4))
 
-		self.sign("data/users/" + address + "/content.json")
-	def sign(self, content):
-		zeronet.sign(self.address, content)
-		zeronet.publish(self.address, content)
+		self.sign("data/users/" + address + "/content.json", privatekey=privatekey)
+	def sign(self, content, privatekey):
+		zeronet.sign(self.address, content, privatekey=privatekey)
+		zeronet.publish(self.address, content, privatekey=privatekey)
 
 	def generate_key(self):
 		res = "thunderproxy-"
