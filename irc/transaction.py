@@ -1,17 +1,13 @@
-from util import debug, critical, ServerError, CommandError
+from util import debug, critical, ServerError, CommandError, NickError
 from util import replycodes, errorcodes
 import re
 
 class Transaction(object):
-	def __init__(self, nick, username, hostname, User, conn, session, server):
-		self.nick = nick
-		self.username = username
-		self.hostname = hostname
-		self.user = User(nick)
+	def __init__(self, nick, username, hostname, conn, session, server):
+		self.user = server.register_user(nick, username, hostname, self)
 		self.conn = conn
 		self.session = session
 		self.server = server
-		self.channels = []
 		self.init()
 
 	def sendall(self, *args, **kwargs):
@@ -20,7 +16,7 @@ class Transaction(object):
 		return self.conn.recvall(*args, **kwargs)
 
 	def reply(self, code, data):
-		self.sendall(":localhost %s %s %s" % (code, self.nick, data))
+		self.sendall(":localhost %s %s %s" % (code, self.user.nick, data))
 	def error(self, code, data):
 		self.reply(errorcodes[code][0], "%s %s" % (errorcodes[code][1], data))
 	def ok(self, code, data):
@@ -29,7 +25,7 @@ class Transaction(object):
 	def init(self):
 		self.ok(
 			"RPL_WELCOME",
-			":Welcome to the Internet Relay Network %s!%s@%s" % (self.nick, self.username, self.hostname)
+			":Welcome to the Internet Relay Network %s!%s@%s" % (self.user.nick, self.user.username, self.user.hostname)
 		)
 		self.ok("RPL_YOURHOST", ":Your host is localhost[127.0.0.1/6697], running version py-irc-1.0")
 		self.ok("RPL_CREATED", ":This server was created Mon Jan 8 2018 at 2:55:16 EST")
@@ -55,6 +51,13 @@ class Transaction(object):
 		self.ok("RPL_GLOBALUSERS", "1 1 :Current global users 1, max 1")
 		self.ok("RPL_STATSCONN", ":Highest connection count: 2 (1 clients) (1 connections received)")
 
+	def commandNick(self, nick):
+		try:
+			self.server.User.check_nick(nick)
+			self.user.change_nick(nick)
+		except NickError as e:
+			self.error("ERR_ERRONEUSNICKNAME", str(e))
+
 	def commandJoin(self, channels, keys=None):
 		channels = channels.split(",")
 		keys = keys.split(",") if keys is not None else []
@@ -62,33 +65,31 @@ class Transaction(object):
 		channels = map(None, channels, keys) # This is like zip() but with padding
 
 		for channel in channels:
-			self.channels.append(channel[0])
 			chan = self.server.get_channel(channel[0])
 			if chan.get_key() != channel[1]:
 				self.error("ERR_BADCHANNELKEY", "")
 
-			chan.connect(self.nick)
+			chan.connect(self.user)
+			self.user.join(chan)
 
 			topic = chan.get_topic()
 			self.ok("RPL_TOPIC", "%s :%s" % (channel[0], topic["topic"]))
 			self.ok("RPL_TOPICWHOTIME", "%s %s %s" % (channel[0], topic["author"], int(topic["time"] / 1000)))
 
 			# Specify online users
-			online = chan.get_online()
-			online = [(nick, chan.get_user(nick)) for nick in online]
 			online = [
-				"@" + user[0] if user[1].is_admin() else
-				"+" + user[0] if user[1].is_moderator() else
-				user[0]
+				"@" + user.nick if user.is_admin() else
+				"+" + user.nick if user.is_moderator() else
+				user.nick
 
-				for user in online
+				for user in chan.get_online()
 			]
 			online = " ".join(online)
 
 			self.ok("RPL_NAMREPLY", "@ %s :%s" % (channel[0], online))
 			self.ok("RPL_ENDOFNAMES", "%s :End of /NAMES list." % channel[0])
 
-			self.sendall(":%s!%s@%s JOIN %s" % (self.nick, self.username, self.hostname, channel[0]))
+			self.sendall(":%s!%s@%s JOIN %s" % (self.user.nick, self.user.username, self.user.hostname, channel[0]))
 
 	def commandAway(self, reason=None):
 		if reason is None:
@@ -111,7 +112,7 @@ class Transaction(object):
 				return
 		else:
 			# User
-			if nick != self.nick:
+			if nick != self.user.nick:
 				self.error("ERR_USERSDONTMATCH", "")
 				return
 
@@ -173,24 +174,23 @@ class Transaction(object):
 		for to in receivers:
 			if to[0] in "#&":
 				# Public message to channel
-				chan = self.server.get_channel(to)
-				chan.send(self.nick, self.username, message)
+				self.server.get_channel(to).send(self.user, message)
 			else:
 				# Private message
-				user = User(to)
-				user.send(self.nick, self.username, message)
+				self.server.get_user(to).send(self.user, message)
 
-	def broadcast(self, nick, username, to, message):
-		# Handle multi-line messages
-		if "\r\n" in message:
-			for line in message.split("\r\n"):
-				self.broadcast(nick, username, to, line)
-			return
+	def commandUserhost(self, *users):
+		replies = []
+		for nick in users:
+			user = self.server.get_user(nick)
+			reply = ":%s%s=%s%s" % (nick, "*" if user.is_moderator() else "", "-" if user.is_away else "+", user.hostname)
+			replies.append(reply)
 
-		if to in self.channels:
-			self.sendall(":%s!%s@localhost PRIVMSG %s :%s" % (nick, username, to, message))
+		self.ok("RPL_USERHOST", " ".join(replies))
 
 	def finish(self):
-		for channel in self.channels:
-			chan = self.server.get_channel(channel)
-			chan.disconnect(self.nick)
+		channels = list(self.user.channels)
+		for chan in channels:
+			chan.disconnect(self.user)
+			self.user.part(chan)
+		self.user.disconnect(self)

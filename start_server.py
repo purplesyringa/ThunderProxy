@@ -12,9 +12,14 @@ lobby = server.get_channel("#lobby")
 
 def callback(address):
 	for message in tw.load_new_lobby_messages(address=address):
-		lobby.broadcast(
+		user = server.register_user(
 			nick=message["cert_user_id"].replace("@", "/"),
 			username=message["from_address"],
+			hostname="remote"
+		)
+
+		lobby.receiveMsg(
+			user=user,
 			message=message["body"].replace("\n", "\r\n")
 		)
 

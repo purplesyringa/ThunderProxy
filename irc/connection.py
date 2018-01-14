@@ -1,7 +1,7 @@
 from util import debug
 
 class Connection(object):
-	END = "\r\n"
+	END = "\n"
 	def __init__(self, conn):
 		self.conn = conn
 		self.awaiting = []
@@ -18,7 +18,7 @@ class Connection(object):
 
 	def recvall(self, END=END):
 		if len(self.awaiting) > 0:
-			data = self.awaiting.pop(0)
+			data = self.awaiting.pop(0).strip()
 			debug("recv: %r", "".join(data))
 			return data
 
@@ -32,7 +32,7 @@ class Connection(object):
 				break
 
 		if len(self.awaiting) > 0:
-			data = self.awaiting.pop(0)
+			data = self.awaiting.pop(0).strip()
 			debug("recv: %r", "".join(data))
 			return data
 

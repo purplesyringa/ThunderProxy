@@ -20,7 +20,8 @@ class Session(object):
 		return self.conn.recvall(*args, **kwargs)
 
 	def reply(self, code, data):
-		self.sendall(":localhost %s %s %s" % (code, self.nick, data))
+		nick = self.nick if self.transaction is None else self.transaction.user.nick
+		self.sendall(":localhost %s %s %s" % (code, nick, data))
 	def error(self, code, data):
 		self.reply(errorcodes[code][0], "%s %s" % (errorcodes[code][1], data))
 	def ok(self, code, data):
@@ -54,7 +55,7 @@ class Session(object):
 
 	def commandCap(self, cmd, *args):
 		if cmd == "LS":
-			self.reply("CAP", "LS :account-notify extended-join identify-msg sasl")
+			self.reply("CAP", "LS :sasl")
 		elif cmd == "END":
 			pass
 
@@ -102,15 +103,8 @@ class Session(object):
 
 		self.transaction = Transaction(
 			self.nick, self.username, self.hostname,
-			User=self.User, conn=self.conn,
-			session=self, server=self.server
+			conn=self.conn, session=self, server=self.server
 		)
 
 	def commandPing(self, server):
 		self.sendall(":localhost PONG localhost :%s" % server)
-
-	def broadcast(self, nick, username, to, message):
-		if self.transaction is None:
-			return
-
-		self.transaction.broadcast(nick, username, to, message)

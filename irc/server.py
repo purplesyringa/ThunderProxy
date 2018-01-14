@@ -12,6 +12,7 @@ class Server(object):
 		self.sock = None
 		self.sessions = []
 		self.channels = []
+		self.users = []
 
 	def serve(self):
 		if self.sock is not None:
@@ -53,16 +54,11 @@ class Server(object):
 
 			conn.close()
 
-	def broadcast(self, nick, username, to, message):
-		for session in self.sessions:
-			session.broadcast(nick, username, to, message)
-
 	def get_channel(self, channel):
 		try:
 			return next(chan for chan in self.channels if chan.name == channel)
 		except StopIteration:
-			chan = self.Channel(channel)
-			chan.broadcast = lambda nick, username, message: self.broadcast(nick, username, chan.name, message)
+			chan = self.Channel(channel, server=self)
 			self.channels.append(chan)
 			return chan
 
@@ -72,3 +68,19 @@ class Server(object):
 			return True
 		except StopIteration:
 			return False
+
+	def get_user(self, nick):
+		return next(user for user in self.users if user.nick == nick)
+
+	def register_user(self, nick, username, hostname, transaction=None):
+		user = None
+		try:
+			user = self.get_user(nick)
+		except StopIteration:
+			user = self.User(nick=nick, username=username, hostname=hostname, server=self)
+			self.users.append(user)
+
+		if transaction is not None:
+			user.connect(transaction)
+
+		return user

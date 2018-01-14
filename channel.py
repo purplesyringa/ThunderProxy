@@ -3,11 +3,11 @@ import time
 from thunderwave import Singleton as ThunderWave
 
 class Channel(object):
-	def __init__(self, name):
+	def __init__(self, name, server):
 		self.name = name
 		self.online = []
 		self.tw = ThunderWave()
-		self.broadcast = lambda nick, username, message: None
+		self.tp_user = server.register_user(nick="ThunderProxy", username="tp", hostname="tp", transaction=None)
 
 	def get_key(self):
 		return None
@@ -21,20 +21,17 @@ class Channel(object):
 	def get_online(self):
 		return self.online
 
-	def get_user(self, nick):
-		return User(nick)
-
 	def get_mode(self):
 		return "+cnt"
 
 	def get_creation_time(self):
 		return 1491048465079
 
-	def connect(self, nick):
-		self.online.append(nick)
-	def disconnect(self, nick):
+	def connect(self, user):
+		self.online.append(user)
+	def disconnect(self, user):
 		try:
-			self.online.remove(nick)
+			self.online.remove(user)
 		except ValueError:
 			pass
 
@@ -58,12 +55,19 @@ class Channel(object):
 	def set_moderated(self, value):
 		raise NotImplementedError()
 
+	def receiveMsg(self, user, message):
+		for to in self.online:
+			to.receivePrivMsg(user, message, chan=self)
+	def broadcast(self, user, data):
+		for to in self.online:
+			to.broadcast(user, data)
+
 	# Messages
-	def send(self, nick, username, message):
+	def send(self, user, message):
 		if self.name == "#lobby":
 			address = None
 			try:
-				address = self.tw.from_cert_user_id(nick.replace("/", "@"))
+				address = self.tw.from_cert_user_id(user.nick.replace("/", "@"))
 			except KeyError:
 				errmsg = """
 					Hello, %s!
@@ -72,8 +76,8 @@ class Channel(object):
 					Make sure that your nick is set like
 					gitcenter/zeroid.bit or glightstar/kaffie.bit.
 					With regards, Ivanq.
-				""".replace("\n", " ").replace("\t", "") % nick
-				self.broadcast("ThunderProxy", "tp", errmsg)
+				""".replace("\n", " ").replace("\t", "") % user.nick
+				self.receiveMsg(self.tp_user, errmsg)
 				return
 
 			self.tw.send_to_lobby(address=address, body=message)
