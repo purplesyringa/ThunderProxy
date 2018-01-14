@@ -3,10 +3,11 @@ import time
 from thunderwave import Singleton as ThunderWave
 
 class Channel(object):
-	def __init__(self, name):
+	def __init__(self, name, server):
 		self.name = name
 		self.online = []
 		self.tw = ThunderWave()
+		self.tp_user = server.register_user(nick="ThunderProxy", username="tp", hostname="tp", transaction=None)
 
 	def get_key(self):
 		return None
@@ -54,16 +55,19 @@ class Channel(object):
 	def set_moderated(self, value):
 		raise NotImplementedError()
 
-	def broadcast(self, nick, username, hostname, message):
-		for user in self.online:
-			user.receivePrivMsg(nick, username, hostname, message, chan=self)
+	def receiveMsg(self, user, message):
+		for to in self.online:
+			to.receivePrivMsg(user, message, chan=self)
+	def broadcast(self, data):
+		for to in self.online:
+			to.broadcast(data)
 
 	# Messages
-	def send(self, nick, username, message):
+	def send(self, user, message):
 		if self.name == "#lobby":
 			address = None
 			try:
-				address = self.tw.from_cert_user_id(nick.replace("/", "@"))
+				address = self.tw.from_cert_user_id(user.nick.replace("/", "@"))
 			except KeyError:
 				errmsg = """
 					Hello, %s!
@@ -72,8 +76,8 @@ class Channel(object):
 					Make sure that your nick is set like
 					gitcenter/zeroid.bit or glightstar/kaffie.bit.
 					With regards, Ivanq.
-				""".replace("\n", " ").replace("\t", "") % nick
-				self.broadcast("ThunderProxy", "tp", "localhost", errmsg, chan=self)
+				""".replace("\n", " ").replace("\t", "") % user.nick
+				self.receiveMsg(self.tp_user, errmsg)
 				return
 
 			self.tw.send_to_lobby(address=address, body=message)

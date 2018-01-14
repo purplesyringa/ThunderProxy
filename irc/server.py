@@ -58,7 +58,7 @@ class Server(object):
 		try:
 			return next(chan for chan in self.channels if chan.name == channel)
 		except StopIteration:
-			chan = self.Channel(channel)
+			chan = self.Channel(channel, server=self)
 			self.channels.append(chan)
 			return chan
 
@@ -72,13 +72,15 @@ class Server(object):
 	def get_user(self, nick):
 		return next(user for user in self.users if user.nick == nick)
 
-	def register_user(self, nick, username, hostname, transaction):
+	def register_user(self, nick, username, hostname, transaction=None):
 		user = None
 		try:
 			user = self.get_user(nick)
 		except StopIteration:
-			user = self.User(nick=nick, username=username, hostname=hostname)
+			user = self.User(nick=nick, username=username, hostname=hostname, server=self)
 			self.users.append(user)
 
-		user.connect(transaction)
+		if transaction is not None:
+			user.connect(transaction)
+
 		return user

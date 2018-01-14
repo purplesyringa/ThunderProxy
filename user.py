@@ -2,7 +2,7 @@ from irc.util import NickError
 from thunderwave import Singleton as ThunderWave
 
 class User(object):
-	def __init__(self, nick, username, hostname):
+	def __init__(self, nick, username, hostname, server):
 		self.nick = nick
 		self.username = username
 		self.hostname = hostname
@@ -41,18 +41,20 @@ class User(object):
 		raise NotImplementedError()
 
 	# Messages
-	def send(self, nick, username, message):
+	def send(self, user, message):
 		pass
 
-	def receivePrivMsg(self, nick, username, hostname, message, chan=None):
+	def receivePrivMsg(self, user, message, chan=None):
 		to = None
 		if chan is None:
 			to = self.nick
 		else:
 			to = chan.name
 
+		self.broadcast(user, "PRIVMSG %s :%s" % (to, message))
+	def broadcast(self, user, data):
 		for transaction in self.transactions:
-			transaction.sendall(":%s!%s@%s PRIVMSG %s :%s" % (nick, username, hostname, to, message))
+			transaction.sendall(":%s!%s@%s %s" % (user.nick, user.username, user.hostname, data))
 
 	@staticmethod
 	def check_nick(nick):
