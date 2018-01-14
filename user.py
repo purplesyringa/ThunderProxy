@@ -44,7 +44,7 @@ class User(object):
 	def send(self, user, message):
 		pass
 
-	def receivePrivMsg(self, nick, username, hostname, message, chan=None):
+	def receivePrivMsg(self, user, message, chan=None):
 		to = None
 		if chan is None:
 			to = self.nick
@@ -52,7 +52,7 @@ class User(object):
 			to = chan.name
 
 		for transaction in self.transactions:
-			transaction.sendall(":%s!%s@%s PRIVMSG %s :%s" % (nick, username, hostname, to, message))
+			transaction.sendall(":%s!%s@%s PRIVMSG %s :%s" % (user.nick, user.username, user.hostname, to, message))
 
 	@staticmethod
 	def check_nick(nick):
