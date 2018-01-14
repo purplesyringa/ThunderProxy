@@ -58,7 +58,7 @@ class Server(object):
 		try:
 			return next(chan for chan in self.channels if chan.name == channel)
 		except StopIteration:
-			chan = self.Channel(channel)
+			chan = self.Channel(channel, server=self)
 			self.channels.append(chan)
 			return chan
 
@@ -77,7 +77,7 @@ class Server(object):
 		try:
 			user = self.get_user(nick)
 		except StopIteration:
-			user = self.User(nick=nick, username=username, hostname=hostname)
+			user = self.User(nick=nick, username=username, hostname=hostname, server=self)
 			self.users.append(user)
 
 		if transaction is not None:
