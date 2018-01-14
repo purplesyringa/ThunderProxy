@@ -54,8 +54,7 @@ class Transaction(object):
 	def commandNick(self, nick):
 		try:
 			self.server.User.check_nick(nick)
-			self.sendall(":%s!%s@%s NICK %s" % (self.nick, self.username, self.hostname, nick))
-			self.nick = nick
+			self.user.change_nick(nick)
 		except NickError as e:
 			self.error("ERR_ERRONEUSNICKNAME", str(e))
 

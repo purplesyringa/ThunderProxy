@@ -15,6 +15,15 @@ class User(object):
 		self.is_away = is_away
 		self.away_reason = reason
 
+	def change_nick(self, new_nick):
+		for chan in self.channels:
+			try:
+				chan.broadcast(self, "NICK %s" % new_nick)
+			except Exception as e:
+				continue
+
+		self.nick = new_nick
+
 	def join(self, chan):
 		self.channels.append(chan)
 	def part(self, chan):
