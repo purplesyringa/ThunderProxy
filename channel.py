@@ -59,7 +59,7 @@ class Channel(object):
 			user.receivePrivMsg(nick, username, hostname, message, chan=self)
 
 	# Messages
-	def send(self, nick, username, message):
+	def send(self, nick, username, hostname, message):
 		if self.name == "#lobby":
 			address = None
 			try:

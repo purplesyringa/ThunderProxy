@@ -168,7 +168,7 @@ class Transaction(object):
 			if to[0] in "#&":
 				# Public message to channel
 				chan = self.server.get_channel(to)
-				chan.send(self.user.nick, self.user.username, message)
+				chan.send(self.user.nick, self.user.username, self.user.hostname, message)
 			else:
 				# Private message
 				self.server.get_user(to).send(self.user.nick, self.user.username, message)
