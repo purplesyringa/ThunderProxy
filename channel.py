@@ -21,9 +21,6 @@ class Channel(object):
 	def get_online(self):
 		return self.online
 
-	def get_user(self, nick):
-		return User(nick)
-
 	def get_mode(self):
 		return "+cnt"
 
