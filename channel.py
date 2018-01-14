@@ -54,9 +54,9 @@ class Channel(object):
 	def set_moderated(self, value):
 		raise NotImplementedError()
 
-	def broadcast(self, nick, username, hostname, message):
-		for user in self.online:
-			user.receivePrivMsg(nick, username, hostname, message, chan=self)
+	def broadcast(self, user, message):
+		for to in self.online:
+			to.receivePrivMsg(user.nick, user.username, user.hostname, message, chan=self)
 
 	# Messages
 	def send(self, user, message):

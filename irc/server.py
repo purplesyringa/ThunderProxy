@@ -72,7 +72,7 @@ class Server(object):
 	def get_user(self, nick):
 		return next(user for user in self.users if user.nick == nick)
 
-	def register_user(self, nick, username, hostname, transaction):
+	def register_user(self, nick, username, hostname, transaction=None):
 		user = None
 		try:
 			user = self.get_user(nick)
@@ -80,5 +80,7 @@ class Server(object):
 			user = self.User(nick=nick, username=username, hostname=hostname)
 			self.users.append(user)
 
-		user.connect(transaction)
+		if transaction is not None:
+			user.connect(transaction)
+
 		return user
