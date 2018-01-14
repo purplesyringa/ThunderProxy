@@ -42,16 +42,16 @@ def guess_public_key(zeroid):
 	except (IOError, KeyError, TypeError):
 		return None
 
-def sign(address, content):
-	privatekey = None
-	with open(data_directory + "/users.json") as f:
-		users = json.loads(f.read())
+def sign(address, content, privatekey=None):
+	if privatekey is None:
+		with open(data_directory + "/users.json") as f:
+			users = json.loads(f.read())
 
-		try:
-			user = users[users.keys()[0]]
-			privatekey = user["certs"]["zeroid.bit"]["auth_privatekey"]
-		except KeyError:
-			raise TypeError("Private key for zeroid.bit not found in users.json")
+			try:
+				user = users[users.keys()[0]]
+				privatekey = user["certs"]["zeroid.bit"]["auth_privatekey"]
+			except KeyError:
+				raise TypeError("Private key for zeroid.bit not found in users.json")
 
 	# Check for lock
 	from util import helper

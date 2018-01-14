@@ -1,6 +1,6 @@
 from util import debug, critical, ServerError, CommandError, NickError
 from util import replycodes, errorcodes
-import re
+import re, base64
 
 class Transaction(object):
 	def __init__(self, nick, username, hostname, conn, session, server):
@@ -8,6 +8,10 @@ class Transaction(object):
 		self.conn = conn
 		self.session = session
 		self.server = server
+
+		self.auth_status = None
+		self.auth_cache = ""
+
 		self.init()
 
 	def sendall(self, *args, **kwargs):
@@ -57,6 +61,39 @@ class Transaction(object):
 			self.user.change_nick(nick)
 		except NickError as e:
 			self.error("ERR_ERRONEUSNICKNAME", str(e))
+
+	def commandAuthenticate(self, mechanism):
+		if self.auth_status is None:
+			if mechanism != "PLAIN":
+				self.ok("RPL_SASLMECHS", "PLAIN :are available SASL mechanisms")
+			else:
+				self.sendall(":localhost AUTHENTICATE +")
+				self.auth_status = "await_response"
+		elif self.auth_status == "await_response":
+			if mechanism == "+":
+				self.auth_status = "auth_in_progress"
+			elif mechanism == "*":
+				self.auth_status = None
+				self.auth_cache = ""
+				self.error("ERR_SASLABORTED", "")
+			elif len(mechanism) < 400:
+				self.auth_status = "auth_in_progress"
+				self.auth_cache += mechanism
+			else:
+				self.auth_cache += mechanism
+
+			if self.auth_status == "auth_in_progress":
+				self.auth()
+				self.auth_status = "done"
+				self.auth_cache = ""
+
+	def auth(self):
+		data = base64.b64decode(self.auth_cache)
+		authzid, authcid, passwd = data.split("\x00", 2)
+		if self.user.auth(passwd):
+			self.ok("RPL_SASLSUCCESS", "")
+		else:
+			self.error("ERR_SASLFAIL", "")
 
 	def commandJoin(self, channels, keys=None):
 		channels = channels.split(",")

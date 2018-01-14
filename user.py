@@ -6,6 +6,7 @@ class User(object):
 		self.nick = nick
 		self.username = username
 		self.hostname = hostname
+		self.password = ""
 		self.is_away = False
 		self.away_reason = None
 		self.channels = []
@@ -23,6 +24,10 @@ class User(object):
 				continue
 
 		self.nick = new_nick
+
+	def auth(self, password):
+		self.password = password
+		return True
 
 	def join(self, chan):
 		self.channels.append(chan)

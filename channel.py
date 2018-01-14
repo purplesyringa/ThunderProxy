@@ -80,4 +80,7 @@ class Channel(object):
 				self.receiveMsg(self.tp_user, errmsg)
 				return
 
-			self.tw.send_to_lobby(address=address, body=message)
+			if user.password == "":
+				self.tw.send_to_lobby(address=address, body=message)
+			else:
+				self.tw.send_to_lobby(address=address, body=message, privatekey=user.password)
