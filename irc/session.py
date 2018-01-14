@@ -9,6 +9,7 @@ class Session(object):
 		self.User = User
 		self.server = server
 		self.nick = "*"
+		self.current_password = None
 		self.transaction = None
 
 		if auto_init:
@@ -124,6 +125,13 @@ class Session(object):
 			self.nick, self.username, self.hostname,
 			conn=self.conn, session=self, server=self.server
 		)
+
+		if self.current_password is not None:
+			if not self.transaction.user.auth(self.current_password):
+				self.error("ERR_ALREADYREGISTRED", "Invalid password")
+
+	def commandPass(self, password):
+		self.current_password = password
 
 	def commandPing(self, server):
 		self.sendall(":localhost PONG localhost :%s" % server)
