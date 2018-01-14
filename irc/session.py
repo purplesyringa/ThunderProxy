@@ -58,12 +58,14 @@ class Session(object):
 			self.commandCapLs(*args)
 		elif cmd == "REQ":
 			self.commandCapReq(*args)
+		elif cmd == "LIST":
+			self.commandCapList(*args)
 		elif cmd == "END":
 			pass
 
 	def commandCapLs(self, version="301"):
 		if version == "302":
-			self.reply("CAP", "LS :sasl=EXTERNAL")
+			self.reply("CAP", "LS :sasl=PLAIN")
 		else:
 			self.reply("CAP", "LS :sasl")
 
@@ -72,6 +74,9 @@ class Session(object):
 			return
 
 		self.reply("CAP", "ACK :sasl")
+
+	def commandCapList(self):
+		self.reply("CAP", "LS :sasl")
 
 	def parseMessage(self, message):
 		prefix = None
