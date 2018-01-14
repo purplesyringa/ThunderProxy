@@ -116,9 +116,6 @@ replycodes = dict(
 	RPL_USERS = 393,
 	RPL_ENDOFUSERS = 394,
 	RPL_NOUSERS = 395,
-	ERR_YOUWILLBEBANNED = 466,
-	ERR_BADCHANMASK = 476,
-	ERR_NOSERVICEHOST = 492
 )
 
 errorcodes = dict(
@@ -154,16 +151,19 @@ errorcodes = dict(
 	ERR_NOPERMFORHOST = (463, ":Your host isn't among the privileged"),
 	ERR_PASSWDMISMATCH = (464, ":Password incorrect"),
 	ERR_YOUREBANNEDCREEP = (465, ":You are banned from this server"),
+	ERR_YOUWILLBEBANNED = (466, ""),
 	ERR_KEYSET = (467, ":Channel key already set"),
 	ERR_CHANNELISFULL = (471, ":Cannot join channel (+l)"),
 	ERR_UNKNOWNMODE = (472, ":is unknown mode char to me"),
 	ERR_INVITEONLYCHAN = (473, ":Cannot join channel (+i)"),
 	ERR_BANNEDFROMCHAN = (474, ":Cannot join channel (+b)"),
 	ERR_BADCHANNELKEY = (475, ":Cannot join channel (+k)"),
+	ERR_BADCHANMASK = (476, ""),
 	ERR_NOPRIVILEGES = (481, ":Permission Denied- You're not an IRC operator"),
 	ERR_CHANOPRIVSNEEDED = (482, ":You're not channel operator"),
 	ERR_CANTKILLSERVER = (483, ":You cant kill a server!"),
 	ERR_NOOPERHOST = (491, ":No O-lines for your host"),
+	ERR_NOSERVICEHOST = (492, ""),
 	ERR_UMODEUNKNOWNFLAG = (501, ":Unknown MODE flag"),
 	ERR_USERSDONTMATCH = (502, ":Cant change mode for other users")
 )
