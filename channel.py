@@ -54,16 +54,16 @@ class Channel(object):
 	def set_moderated(self, value):
 		raise NotImplementedError()
 
-	def broadcast(self, nick, username, hostname, message):
-		for user in self.online:
-			user.receivePrivMsg(nick, username, hostname, message, chan=self)
+	def broadcast(self, user, message):
+		for to in self.online:
+			to.receivePrivMsg(user, message, chan=self)
 
 	# Messages
-	def send(self, nick, username, message):
+	def send(self, user, message):
 		if self.name == "#lobby":
 			address = None
 			try:
-				address = self.tw.from_cert_user_id(nick.replace("/", "@"))
+				address = self.tw.from_cert_user_id(user.nick.replace("/", "@"))
 			except KeyError:
 				errmsg = """
 					Hello, %s!
@@ -72,7 +72,7 @@ class Channel(object):
 					Make sure that your nick is set like
 					gitcenter/zeroid.bit or glightstar/kaffie.bit.
 					With regards, Ivanq.
-				""".replace("\n", " ").replace("\t", "") % nick
+				""".replace("\n", " ").replace("\t", "") % user.nick
 				self.broadcast("ThunderProxy", "tp", "localhost", errmsg, chan=self)
 				return
 
