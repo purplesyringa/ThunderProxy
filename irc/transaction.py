@@ -179,6 +179,15 @@ class Transaction(object):
 				# Private message
 				self.server.get_user(to).send(self.nick, self.username, message)
 
+	def commandUserhost(self, *users):
+		replies = []
+		for nick in users:
+			user = self.server.get_user(nick)
+			reply = ":%s%s=%s%s" % (nick, "*" if user.is_moderator() else "", "-" if user.is_away else "+", user.hostname)
+			replies.append(reply)
+
+		self.ok("RPL_USERHOST", " ".join(replies))
+
 	def broadcast(self, nick, username, to, message):
 		# Handle multi-line messages
 		if "\r\n" in message:
