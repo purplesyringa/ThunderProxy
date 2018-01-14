@@ -41,7 +41,7 @@ class User(object):
 		raise NotImplementedError()
 
 	# Messages
-	def send(self, nick, username, message):
+	def send(self, user, message):
 		pass
 
 	def receivePrivMsg(self, nick, username, hostname, message, chan=None):
