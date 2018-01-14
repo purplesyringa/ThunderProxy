@@ -7,6 +7,7 @@ class Channel(object):
 		self.name = name
 		self.online = []
 		self.tw = ThunderWave()
+		self.tp_user = server.register_user(nick="ThunderProxy", username="tp", hostname="tp", transaction=None)
 
 	def get_key(self):
 		return None
@@ -73,7 +74,7 @@ class Channel(object):
 					gitcenter/zeroid.bit or glightstar/kaffie.bit.
 					With regards, Ivanq.
 				""".replace("\n", " ").replace("\t", "") % user.nick
-				self.broadcast("ThunderProxy", "tp", "localhost", errmsg, chan=self)
+				self.broadcast(self.tp_user, errmsg)
 				return
 
 			self.tw.send_to_lobby(address=address, body=message)
