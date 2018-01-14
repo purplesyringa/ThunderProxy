@@ -4,11 +4,11 @@ ThunderProxy is a local IRC server connecting [ThunderWave](https://github.com/A
 
 ## TODO
 
-1. Send messages via IRC to lobby
-2. Send messages to group chats
-3. Receive messages from group chats
-4. Send messages to private chats
-5. Receive messages from private chats
+1. Send messages to group chats
+2. Receive messages from group chats
+3. Send messages to private chats
+4. Receive messages from private chats
+5. ~~Send messages via IRC to lobby~~
 6. ~~Receive messages from lobby~~
 
 ## Installation and usage
