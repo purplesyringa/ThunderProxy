@@ -33,4 +33,4 @@ Windows:
 
 ## Local server
 
-IRC server is ran on `localhost`, port `6697`. Configure your IRC client to access that address.
+IRC server is ran on `localhost`, port `6667`. Configure your IRC client to access that address.

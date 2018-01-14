@@ -3,7 +3,7 @@ from user import User
 import threading, re
 
 import irc.server
-server = irc.server.Server("localhost", 6697, Channel=Channel, User=User)
+server = irc.server.Server("localhost", 6667, Channel=Channel, User=User)
 threading.Thread(target=server.serve).start()
 
 from thunderwave import Singleton as ThunderWave
