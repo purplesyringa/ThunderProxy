@@ -187,7 +187,7 @@ class ThunderWave(object):
 		self.sign("data/users/" + address + "/content.json", privatekey=privatekey)
 	def sign(self, content, privatekey):
 		zeronet.sign(self.address, content, privatekey=privatekey)
-		zeronet.publish(self.address, content, privatekey=privatekey)
+		zeronet.publish(self.address, content)
 
 	def generate_key(self):
 		res = "thunderproxy-"
