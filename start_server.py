@@ -18,7 +18,7 @@ def callback(address):
 			hostname="remote"
 		)
 
-		lobby.broadcast(
+		lobby.receiveMsg(
 			user=user,
 			message=message["body"].replace("\n", "\r\n")
 		)

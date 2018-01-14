@@ -55,9 +55,12 @@ class Channel(object):
 	def set_moderated(self, value):
 		raise NotImplementedError()
 
-	def broadcast(self, user, message):
+	def receiveMsg(self, user, message):
 		for to in self.online:
 			to.receivePrivMsg(user, message, chan=self)
+	def broadcast(self, data):
+		for to in self.online:
+			to.broadcast(data)
 
 	# Messages
 	def send(self, user, message):
@@ -74,7 +77,7 @@ class Channel(object):
 					gitcenter/zeroid.bit or glightstar/kaffie.bit.
 					With regards, Ivanq.
 				""".replace("\n", " ").replace("\t", "") % user.nick
-				self.broadcast(self.tp_user, errmsg)
+				self.receiveMsg(self.tp_user, errmsg)
 				return
 
 			self.tw.send_to_lobby(address=address, body=message)
