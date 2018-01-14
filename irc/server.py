@@ -12,6 +12,7 @@ class Server(object):
 		self.sock = None
 		self.sessions = []
 		self.channels = []
+		self.users = []
 
 	def serve(self):
 		if self.sock is not None:
@@ -72,3 +73,14 @@ class Server(object):
 			return True
 		except StopIteration:
 			return False
+
+	def get_user(self, nick):
+		return next(user for user in self.users if user.nick == nick)
+
+	def register_user(self, nick, username, hostname):
+		try:
+			return self.get_user(nick)
+		except StopIteration:
+			user = self.User(nick=nick, username=username, hostname=hostname)
+			self.users.append(user)
+			return user

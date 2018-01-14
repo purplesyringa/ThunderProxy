@@ -102,8 +102,7 @@ class Session(object):
 
 		self.transaction = Transaction(
 			self.nick, self.username, self.hostname,
-			User=self.User, conn=self.conn,
-			session=self, server=self.server
+			conn=self.conn, session=self, server=self.server
 		)
 
 	def commandPing(self, server):

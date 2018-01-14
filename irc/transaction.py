@@ -3,11 +3,11 @@ from util import replycodes, errorcodes
 import re
 
 class Transaction(object):
-	def __init__(self, nick, username, hostname, User, conn, session, server):
+	def __init__(self, nick, username, hostname, conn, session, server):
 		self.nick = nick
 		self.username = username
 		self.hostname = hostname
-		self.user = User(nick)
+		self.user = server.register_user(nick, username, hostname)
 		self.conn = conn
 		self.session = session
 		self.server = server
@@ -75,7 +75,7 @@ class Transaction(object):
 
 			# Specify online users
 			online = chan.get_online()
-			online = [(nick, chan.get_user(nick)) for nick in online]
+			online = [(nick, self.server.get_user(nick)) for nick in online]
 			online = [
 				"@" + user[0] if user[1].is_admin() else
 				"+" + user[0] if user[1].is_moderator() else
@@ -177,8 +177,7 @@ class Transaction(object):
 				chan.send(self.nick, self.username, message)
 			else:
 				# Private message
-				user = User(to)
-				user.send(self.nick, self.username, message)
+				self.server.get_user(to).send(self.nick, self.username, message)
 
 	def broadcast(self, nick, username, to, message):
 		# Handle multi-line messages
