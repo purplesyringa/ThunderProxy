@@ -162,7 +162,7 @@ class ThunderWave(object):
 		with open(self.cache_directory + "/last_time.json", "w") as f:
 			f.write(json.dumps(last_time))
 
-	def send_to_lobby(self, address, body, privatekey):
+	def send_to_lobby(self, address, body, privatekey=None):
 		path = "%s/%s/data/users/%s/data.json" % (data_directory, self.address, address)
 
 		key = self.generate_key()
