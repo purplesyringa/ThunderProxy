@@ -43,24 +43,24 @@ First, run `python start_server.py`.
 
 ### Configuring ThunderBird
 
-1. ![Chat](images/thunderbird/1.png)
-    Open ThunderBird and press `Chat`
-2. ![Show Accounts](images/thunderbird/2.png)
-    Press `Show Accounts`
-3. ![New Account](images/thunderbird/3.png)
-    Press `New Account`
-4. ![IRC](images/thunderbird/4.png)
-    Choose **IRC**
-5. ![Login](images/thunderbird/5.png)
-    Use username `<yourname>/<authprovider>` and server `localhost`
-6. ![Password](images/thunderbird/6.png)
-    Leave password empty
-7. ![IRC Options](images/thunderbird/7.png)
-    Open **IRC Options**:
+1. ![Chat](images/thunderbird/1.png)  
+    Open ThunderBird and press `Chat`  
+2. ![Show Accounts](images/thunderbird/2.png)  
+    Press `Show Accounts`  
+3. ![New Account](images/thunderbird/3.png)  
+    Press `New Account`  
+4. ![IRC](images/thunderbird/4.png)  
+    Choose **IRC**  
+5. ![Login](images/thunderbird/5.png)  
+    Use username `<yourname>/<authprovider>` and server `localhost`  
+6. ![Password](images/thunderbird/6.png)  
+    Leave password empty  
+7. ![IRC Options](images/thunderbird/7.png)  
+    Open **IRC Options**:  
     * Choose port `6667`
     * Uncheck **Use SSL**
-    * Press `Next >`
-8. ![Finish](images/thunderbird/8.png)
-    Press `Next ->` and then `Finish`
-9. ![Lobby](images/thunderbird/9.png)
-    *(optional)* Join channel `lobby`.
+    * Press `Next >`  
+8. ![Finish](images/thunderbird/8.png)  
+    Press `Next ->` and then `Finish`  
+9. ![Lobby](images/thunderbird/9.png)  
+    *(optional)* Join channel `lobby`.  
