@@ -36,7 +36,7 @@ class Session(object):
 			if message.strip() == "":
 				continue
 
-			if message == "QUIT":
+			if message.startswith("QUIT ") or message == "QUIT":
 				if self.transaction is not None:
 					self.transaction.finish()
 				break
