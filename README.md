@@ -43,24 +43,45 @@ First, run `python start_server.py`.
 
 ### Configuring ThunderBird
 
-1. ![Chat](images/thunderbird/1.png)  
-    Open ThunderBird and press `Chat`  
-2. ![Show Accounts](images/thunderbird/2.png)  
-    Press `Show Accounts`  
-3. ![New Account](images/thunderbird/3.png)  
-    Press `New Account`  
-4. ![IRC](images/thunderbird/4.png)  
-    Choose **IRC**  
-5. ![Login](images/thunderbird/5.png)  
-    Use username `<yourname>/<authprovider>` and server `localhost`  
-6. ![Password](images/thunderbird/6.png)  
-    Leave password empty  
-7. ![IRC Options](images/thunderbird/7.png)  
-    Open **IRC Options**:  
+1. Open ThunderBird and press `Chat`  
+![Chat](images/thunderbird/1.png)
+2. Press `Show Accounts`  
+![Show Accounts](images/thunderbird/2.png)
+3. Press `New Account`  
+![New Account](images/thunderbird/3.png)
+4. Choose **IRC**  
+![IRC](images/thunderbird/4.png)  
+5. Use username `<yourname>/<authprovider>` and server `localhost`  
+![Login](images/thunderbird/5.png)
+6. Leave password empty  
+![Password](images/thunderbird/6.png)
+7. Open **IRC Options**:
     * Choose port `6667`
     * Uncheck **Use SSL**
     * Press `Next >`  
-8. ![Finish](images/thunderbird/8.png)  
-    Press `Next ->` and then `Finish`  
-9. ![Lobby](images/thunderbird/9.png)  
-    *(optional)* Join channel `lobby`.  
+![IRC Options](images/thunderbird/7.png)
+8. Press `Next ->` and then `Finish`  
+![Finish](images/thunderbird/8.png)
+9. *(optional)* Join channel `lobby`  
+![Lobby](images/thunderbird/9.png)
+
+### Configuring mIRC
+
+1. Start mIRC  
+![Start mIRC](images/mirc/1.png)
+2. Open **mIRC Options**  
+![mIRC Options](images/mirc/2.png)
+3. Choose `Servers` in sidebar  
+![Servers](images/mirc/3.png)
+4. Press `Add`  
+![Add](images/mirc/4.png)
+5. Choose address `localhost` and press `Add`  
+![Server](images/mirc/5.png)
+6. Press `Select`  
+![Select](images/mirc/6.png)
+7. Enter nickname `<yourname>/<authprovider>` and press `Connect`  
+![Login](images/mirc/7.png)
+8. Click `ThunderWave <yourname>/<authprovider>` in sidebar  
+![Logging in](images/mirc/8.png)
+9. *(optional)* Type `/join #lobby`  
+![Joining lobby](images/mirc/9.png)
